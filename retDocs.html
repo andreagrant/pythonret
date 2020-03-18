@@ -1,0 +1,824 @@
+<html>
+    <head>
+        <title>Python Ret Docs</title>
+        <meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html;charset=iso-8859-1&quot;>
+
+    </head>
+    <body>
+        <h1>retinotopy.py documentation</h1>
+        <p style=&quot;width:500px;&quot;>
+        This program presents basic retinotopic mapping stimulus, localizers for MT (motion), LOC (objects), and VWFA (words) and a variety of flickering or drifting checkerboards. It reproduces the functions of the RET code which runs on Macs only. Retinotopy.py is a python script that uses the PsychoPy toolbox. For each scan, the code will wait for the subject to press a button indicating they are ready, then the code will wait for a trigger from the scanner. Some scans will present a third message to the operato before the ''subject ready'' message; this includes information about the length of the scan and number of TRs. The code expects keyboard presses for subject responses and trigger; the defaults are <i><b>bygr</i></b> for subject responses and <i><b>t</i></b> for trigger or <i><b>1234</i></b> for responses and <i><b>5</i></b> for trigger.
+        <h2>Required citation</h2>
+         If you use the stimuli in a publication, please cite the papers describing <a href=&quot;http://www.psychopy.org/&quot;>PsychoPy</a>:
+        <ul>
+                <li>Peirce, JW (2007) PsychoPy - Psychophysics software in Python. J Neurosci Methods, 162(1-2):8-13
+                <li>Peirce JW (2009) Generating stimuli for neuroscience using PsychoPy. Front. Neuroinform. 2:10. doi:10.3389/neuro.11.010.2008
+                </ul>
+        The stimuli that use images have further citations (see ''Stimulus Types''); these are not available outside the CMRR, as I do not have rights to redistribute the processed images.
+
+        <h2>Contact information</h2>
+        Andrea Grant, gran0260@umn.edu
+
+        <h2> Running Modes</h2>
+        <ol style=&quot;width:500px;&quot;>
+            <li>Predetermined scan sequence and timing details using a parameter file (details below)
+            <li>Run &quot;dynamically&quot; by choosing the timing information and other details, then choosing each scan type after the previous scan finishes
+        </ol>
+        <h2>Stimulus Types</h2>
+        <ol style=&quot;width:500px;&quot;>
+                <li>Rotating wedge (drifting checkerboard).
+                <ol>
+                        <li>Wedge can be any width (22.5 and 45 are defaults)
+                        <li>can rotate clockwise or counterclockwise
+                        </ol>
+                <li>Expanding/contracting ring (drifting checkerboard).
+                <ol>
+                        <li>The ring can be any duty cycle (12.5% or 25% are defaults)
+                        <li>can expand or contract
+                        </ol>
+                <li>Motion localizer (field of drifting vs. static dots).
+                <ol>
+                        <li>The scan can start with moving or static dots
+                        </ol>
+                <li>Object localizer (intact vs. scrambled images).
+                <ol>
+                        <li>The scan can start with the intact or scrambled images.
+                        <li>Note: the scrambled images are available but still need some optimization.
+                        <li><b><i>required citation: </b></i>image are from <a href="http://stims.cnbc.cmu.edu/Image%20Databases/TarrLab/Objects/">Tarr Lab</a>: " If you use any of these images in publicly available work - talks, papers, etc. - you must acknowledge their source and adhere to the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. You must also include the line Stimulus images courtesy of Michael J. Tarr, Center for the Neural Basis of Cognition and Department of Psychology, Carnegie Mellon University, http://www.tarrlab.org/."
+                        </ol>
+                <li>Full field flickering checkerboard.
+                <ol>
+                        <li>Both checkerboard colors (and background color) and flicker frequency can be specified.
+                        <li>Timing can be symmetric (X seconds on, X seconds off) or asymmetric
+                        </ol>
+               <li> Full field drifting checkerboard (black and white on gray background)
+               <ol>
+                        <li>Stimulus on vs. off
+                        <li>Drifting checkerboard vs. static checkerboard
+                        <li>Center vs. surround checkerboard
+                        <li>Center vs. inner surround vs. outer surround checkerboard (i.e., fovea vs. periphery localizer)
+                        <li>Alternating halves checkerboard
+                        <li>Timing can be symmetric (X seconds A, X seconds B) or asymmetric (X seconds A Y seconds B repeated N times followed by a rest of M. This block can be repeated)
+                        </ol>
+               <li> Visual word form area (VWFA) localizer
+               <ol>
+                        <li>with images of words, chairs, houses, and faces in a block design (10 trials per block, 4 blocks of each type)
+                        <ul>
+                                <li><b><i>required citations: </b></i>
+                                <ul>
+                                        <li>faces are from <a href="http://www.cl.cam.ac.uk/research/dtg/attarchive/facedatabase.html">AT&T Laboratories Cambridge</a>: "When using these images, please give credit to AT&T Laboratories Cambridge."
+                                        <li>chairs and objects are from <a href="http://stims.cnbc.cmu.edu/Image%20Databases/TarrLab/Objects/">Tarr Lab</a>: " If you use any of these images in publicly available work - talks, papers, etc. - you must acknowledge their source and adhere to the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. You must also include the line Stimulus images courtesy of Michael J. Tarr, Center for the Neural Basis of Cognition and Department of Psychology, Carnegie Mellon University, http://www.tarrlab.org/."
+                                        <li>houses are from <a href="http://groups.csail.mit.edu/vision/SUN/">MIT SUN database</a>:"SUN Database: Large-scale Scene Recognition from Abbey to Zoo". J. Xiao, J. Hays, K. Ehinger, A. Oliva, and A. Torralba. IEEE Conference on Computer Vision and Pattern Recognition, 2010.
+                                </ul>
+                        </ul>
+                        <li>with letters, emoticons, and ''wingdings'' (letter-like but non-letter symbols) in a block design (12 trials per block, 3 blocks of each type)
+                        <ol>
+                                <li>Note: the emoticons and wingdings don't display correctly yet
+                                </ol>
+                        </ol>
+                </ol>
+
+        <h2>Parameter File</h2>
+        <p style=&quot;width:500px;&quot;>
+        <b>Overview:</b> The parameter file defines two variables that are used to control the stimuli. The first is a python &quot;dictionary&quot;, a series of key:value pairs. Some key/values aren't used for some stimuli; they can be removed from the parameter file or left in (and will be ignored). The format for a dictionary is myDict = {'key1':value1,'key2':value2}
+        <ul style=&quot;width:500px;&quot;>
+                <li>The key is in single quotes.
+                <li>If the value is a single number, just type the number:  <b>6.7</b>
+                <li>If it's a sequence of numbers, such as an RGB triplet, enclose it in square brackets separated by commas:  <b>[1,1,0]</b>
+                <li>If the value is a string, such as the monitor calibration name, enter it inside a pair of single quotes: <b>'7TASwest'</b>
+                <li>The key/value pairs can be in any order within the {} and are separated by a comma
+                </ul>
+        <p  style=&quot;width:500px;&quot;>
+        The second variable is a &quot;list&quot; containing the stimulus types to be displayed, in order (# indicates the text following it will be ignored as a comment). The name of the stimulus type has to be entered exactly. The list is first declared to be the right length (don't edit this line)
+        <ul>
+                <li>scanSeq = [0]*scanDict['numScans']
+                </ul>
+        Then the individual scans are assigned:
+        <ul>
+                <li>scanSeq[0]='full-field flickering checkerboard asymmetric'
+                <li>#scanSeq[1]='cw wedge'
+                <li>#scanSeq[2]='motionA'
+                </ul>
+        <h3>List of stimulus types and their official names in the parameter file</h3>
+        <ul style=&quot;width:500px;&quot;>
+                <li><b>cw wedge:</b>&nbsp;&nbsp;&nbsp;wedge rotating clockwise. Rotation speed is determined by the period, drift speed (of the internal wedge bits, normally 0.2Hz) is set by animFreq, wedge width is set by wedgeWidth. This is a travelling wave retinotopy scan
+                <li><b>ccw wedge:</b>&nbsp;&nbsp;&nbsp;wedge rotating counterclockwise. Rotation speed is determined by the period, drift speed (of the internal wedge bits, normally 0.2Hz) is set by animFreq, wedge width is set by wedgeWidth. This is a travelling wave retinotopy scan
+                <li><b>contracting ring:</b>&nbsp;&nbsp;&nbsp;ring which contracts. Contraction speed is determined by the period (and eccentricity limits), drift speed (of the internal wedge bits) is set by animFreq (normally 0.2Hz), duty cycle (eccentricity width of ring) is set by dutyCycle. This is a travelling wave retinotopy scan
+                <li><b>expanding ring:</b>&nbsp;&nbsp;&nbsp;ring which expands. Contraction speed is determined by the period (and eccentricity limits), drift speed (of the internal wedge bits) is set by animFreq (normally 0.2Hz), duty cycle (eccentricity width of ring) is set by dutyCycle. This is a travelling wave retinotopy scan
+                <li><b>motionA:</b>&nbsp;&nbsp;&nbsp;motion localizer consisting of moving vs static dots. The first half of each period is moving dots, the second half is static dots. If preScanRest is ½ period, it will show static dots.
+                <li><b>motionB:</b>&nbsp;&nbsp;&nbsp;&quot;inverse&quot; motion localizer consisting of moving vs static dots. The first half of each period is static dots, the second half is moving dots. If preScanRest is ½ period, it will show moving dots.
+                <li><b>objectA:</b>&nbsp;&nbsp;&nbsp;object localizer consisting of intact vs. scrambled images. The first half of each period is intact images, the second half is scrambled images. If preScanRest is ½ period, it will show scrambled images
+                 <li><b>objectB:</b>&nbsp;&nbsp;&nbsp;&quot;inverse&quot; object localizer consisting of intact vs. scrambled images. The first half of each period is scrambled images, the second half is intact images. If preScanRest is ½ period, it will show intact images
+                <li><b>full-field flickering checkerboard:</b>&nbsp;&nbsp;&nbsp;full field flickering checkerboard, on-off, with symmetric timing. Colors of the checkerboard and background can be specified, as can animation (flicker) frequency (animFreq). Number of wedges and width of wedge rings can be specified. Timing can be controlled by clocktime or scanner triggers:
+                <ul>
+                        <li><b>timebase=1:</b>&nbsp;&nbsp;&nbsp;(clock control) Stimulus is off for preScanRest time, on for period/2 time, and off for period/2 time.
+                        <li><b>timebase=0:</b>&nbsp;&nbsp;&nbsp;(trigger control) Stimulus/rest is shown until N triggers are received. Stimulus is off for N=preScanRest/Tr, on for N=(1/2)*period/Tr, off for N=(1/2)*period/Tr
+                        </ul>
+                <li><b>full-field flickering checkerboard asymmetric:</b>&nbsp;&nbsp;&nbsp;full field flickering checkerboard, on-off, with flexible timing. Stimulus is off for preScanRest time, on for stimDuration time, and off for (period - stimDuration) time.  Number of wedges and width of wedge rings can be specified. Colors of the checkerboard and background can be specified, as can animation (flicker) frequency
+                <li><b>drifting checkerboard on-off:</b>&nbsp;&nbsp;&nbsp;full field drifting checkerboard (black and white), on-off  with symmetric timing. Stimulus is on for period/2 time and then off for period/2. Drift rate is controlled by animFreq
+                <li><b>drifting checkerboard drift-static:</b>&nbsp;&nbsp;&nbsp;full field drifting checkerboard (black and white), drift vs. static with symmetric timing. Stimulus is drifting for period/2 time and then static for period/2. Drift rate is controlled by animFreq
+                <li><b>drifting checkerboard center-surround:</b>&nbsp;&nbsp;&nbsp;full field drifting checkerboard (black and white), center vs. surround with symmetric timing. Stimulus is center for period/2 time and then the surround for period/2. Drift rate is controlled by animFreq. Center/surround cutoff radius is fixed at 4 degrees
+                <li><b>drifting checkerboard center-inner-outer:</b>&nbsp;&nbsp;&nbsp;full field drifting checkerboard (black and white), center vs. inner surround vs. outer surround with symmetric timing. Stimulus is outer surround for preScanRest time, center for period/3 time, inner surround for period/3 time, and outer surround for period/2. Drift rate is controlled by animFreq. Center/inner surround border is given by Ralpha, inner surround/outersurround border is defined by Rbeta.
+                <li><b>drifting checkerboard alternating halves:</b>&nbsp;&nbsp;&nbsp;full field drifting checkerboard (black and white), alternating halves  with symmetric timing. Stimulus is on the right side for period/2 time and then the left side for period/2. Drift rate is controlled by animFreq
+                <li><b>drifting checkerboard on-off asymmetric:</b>&nbsp;&nbsp;&nbsp;full field drifting checkerboard (black and white), on-off  with asymmetric timing. Stimulus is on for stimDurationA time and then off for stimDurationB. Drift rate is controlled by animFreq
+                <li><b>drifting checkerboard drift-static asymmetric:</b>&nbsp;&nbsp;&nbsp;full field drifting checkerboard (black and white), drift vs. static with asymmetric timing. Stimulus is  drifting for stimDurationA time and then static for stimDurationB. Drift rate is controlled by animFreq, number of AB repetitions per block is controlled by numReps, number of blocks is controlled by numBlocks, and inter-block rest is controlled by stimDurationRest
+                <li><b>drifting checkerboard center-surround asymmetric:</b>&nbsp;&nbsp;&nbsp;full field drifting checkerboard (black and white), center vs. surround with asymmetric timing. Stimulus is center for stimDurationA time and then the surround for stimDurationB. Drift rate is controlled by animFreq. Center/surround cutoff radius is fixed at 4 degrees, number of AB repetitions per block is controlled by numReps, number of blocks is controlled by numBlocks, and inter-block rest is controlled by stimDurationRest
+                <li><b>drifting checkerboard alternating halves asymmetric:</b>&nbsp;&nbsp;&nbsp;full field drifting checkerboard (black and white), alternating halves  with asymmetric timing. Stimulus is on the right side for stimDurationA time and then the left side for stimDurationB. Drift rate is controlled by animFreq, number of AB repetitions per block is controlled by numReps, number of blocks is controlled by numBlocks, and inter-block rest is controlled by stimDurationRest
+                <li><b>VWFA localizer:</b>&nbsp;&nbsp;&nbsp;VWFA localizer using letters, non-letter symbols, and emoticons. Timing is hardcoded to present 12 trials per block and 3 blocks of each type, with 12s of rest in before starting, between blocks, and after the last block(restArestBrestCrestBrestArestCrestBrestCrestArest). Stimulus is presented for 0.75s with an ISI of 0.25s.
+                <li><b>VWFA localizer images:</b>&nbsp;&nbsp;&nbsp;VWFA localizer using words and pictures of chairs, houses, and faces. Timing is hardcoded to present 10 trials per block and 4 blocks of each type, with 10s of rest in before starting, between blocks, and after the last block (restABCDrestBADCrestCBDArestDCABrest). Stimulus is presented for 0.75s with an ISI of 0.25s.
+
+        <h3>List of Parameters</h3>
+        <ul style=&quot;width:500px;&quot;>
+                <li><b>Tr</b> in seconds
+                <li><b>preScanRest</b>   duration of ''rest'' to show before the stimulus starts. For retinotopy traveling waves (a,b), this will start the stimulus earlier in the period. For MT and LOC, this will start with the ''off'' condition. For checkerboard scans, this will show rest (blank gray screen with fixation). This time is not part of the number of full cycles
+                <li><b>postScanRest</b>   duration of ''rest'' to show after the last stimulus ends. 
+                <li><b>stimDuration</b> in seconds. Used for asymmetric flickering checkerboard scans
+                <li><b>stimDurationA</b> in seconds. Used for asymmetric drifting checkerboard scans
+                <li><b>stimDurationB</b> in seconds. Used for asymmetric drifting checkerboard scans
+                <li><b>stimDurationRest</b> in seconds. Used for asymmetric drifting checkerboard scans
+                <li><b>period</b>  in seconds (stimulus duration + rest, or full cycle for traveling waves)
+                <li><b>numCycles</b>   how many full cycles of stimulus+rest or traveling waves to show. This doesn't include the preScanRest time
+                <li><b>numReps</b> number of AB repetitions per block for asymmetric drifting checkerboard scans
+                <li><b>numBlocks</b> number of (ABABrest) blocks for asymmetric drifting checkerboard scans
+                <li><b>contrast</b>  0 to 1
+                <li><b>innerRadius</b>   in degrees. The fixation mark size is fixed at 0.5*innerRadius, so innerRadius smaller than about 0.4 degrees could become too small to see.
+                <li><b>outerRadius</b> in degrees. This can be as large as desired, but will be obviously be limited by the size of the screen
+                <li><b>wedgeWidth</b> in degrees. The width of the rotating wedge
+                <li><b>dutyCycle</b> in percent. The eccentricity width of the expanding/contracting ring, in percent (of outerRadius)
+                <li><b>fixFraction</b>  the fraction of time (on average) that the fixation point could change. The task is for the subject to hit a button anytime the fixation mark (  +  ) rotates by 45 degrees (  x  ). The mark could change every 100 frames; this fraction determines whether or not it will.
+                <li><b>animFreq</b> the flicker frequency in Hz for the flickering checkerboard, or the drift frequency for drifting checkerboards (normally 0.2Hz for retinotopic mapping)
+                <li><b>colorA</b> first color of the checkerboard for flickering checkerboards only. Specify as an RGB triplet ranging from 0 to 1. E.g., [1,0,0] or [0.5,1,0]
+                <li><b>colorB</b> second color of the flickering checkerboard, RGB triplet
+                <li><b>colorBackground</b> background color for the flickering checkerboard, RGB triplet
+                <li><b>monitor</b>  the ''monitor'' file (projector) to use. These will load up the linearized gamma table for that projector. This will populate a list of monitor files that have been created in monitor center on the local stimulus machines. At the CMRR, valid options are (depending on the scanner)
+                <ul>
+                        <li><b>7TASwest</b>
+                        <li><b>7TASeast</b>
+                        <li><b>7TPS</b>
+                        <li><b>3TA</b>
+                        <li><b>3TB</b>
+                        <li><b>other</b>  loads up PsychoPy's ''testMonitor'', without gamma linearization
+                        </ul>
+                <li><b>operatorScreen</b>   screen number for the operator, normally 0 for the primary display on the computer. Only used for flickering checkerboards, which display a graph of subject responses during the scan
+                <li><b>subjectScreen</b>  screen number for the subject, normally 1 for the secondary display which is routed to the projector. If the two displays are mirrored, this should be 0 and the flickering checkerboards can't be run.
+                <li><b>numScans</b>  the number of scans to be run. This number is used to initialize the variable containing the sequence of scans in the parameter file
+                <li><b>timeBase</b>  whether the stimulus timing is controlled via computer's clock (1) or scanner triggers (0). Available only for flickering checkerboards with even timing (not for the asymmetric checkerboards)
+                <li><b>Ralpha</b>  eccentricity border between center and inner surround for center/inner surround/outer surround drifting checkerboard, in degrees
+                <li><b>Rbeta</b>  eccentricity border between inner surround and outer surround for center/inner surround/outer surround drifting checkerboard, in degrees
+                <li><b>pairWedge</b> Option to display a pair of wedges (for improving fixation) in rotating wedge
+                <li><b>fixationStyle</b> Option to have fixation mark change color (and rotate) for flickering checkerboard scans; 1 for rotation only, 2 for rotation and color change
+                <li><b>trigger</b> allowed characters for trigger signal from scanner; defaults to <b>5t</b>
+                <li><b>subject responses</b> allowed characters for subject responses; defaults to <b>1234bygr</b>
+                <li><b>numWedgePairs</b> number of pairs of wedges in a flickering checkerboard                <li><b>ringWidth</b> width of each ring (in degrees of visual angle) for flickering checkerboards
+                </ul>
+
+        <h2>Instructions for running the code</h2>
+        <ul style=&quot;width:500px;&quot;>
+                <li>Launch the standalone PsychoPy application
+                <li>Open the file "retinotopy.py" located on the desktop in the folder pythonret
+                <li>Set up your parameter file, if desired (see full documentation or retinotopyParamsExample.py)
+                <li>Click the green run button or type CTRL-R (windows) or CMD-R (mac)
+                <li>Click on your desired running mode (parameter file or dynamic)
+                <ul>
+                        <li><b>parameter mode:</b>
+                        <ul>
+                                <li>Choose the parameter file from the file-open dialog
+                                </ul>
+                        <li><b>dynamic mode:</b>
+                        <ul>
+                                <li>Specify the general details for the scans.
+                                <li>Choose the stimulus type for the next scan.
+                                <li>Specify the specific parameters for that scan
+                                <li>When you are done, choose QUIT
+                                </ul>
+                        </ul>
+                </ul>
+
+
+
+
+<table align="&quot;left&quot;" border="1" cellpadding="1" cellspacing="1">
+<tbody>
+<tr>
+<td>&nbsp;</td>
+<td>description</td>
+<td>range [default]</td>
+<td>wedge (cw or ccw)</td>
+<td>ring (exp or cont)</td>
+<td>motion (A or B)</td>
+<td>object (A or B)</td>
+<td>full field flickering checkerboard</td>
+<td>full field flickering checkerboard with asymmetric timing</td>
+<td>drifting checkerboard (on/off or drift/static or
+center-surround or alternating halves)</td>
+<td>drifting
+checkerboard asymmetric (on/off or drift/static or center-surround or
+alternating halves)</td>
+<td> drifting checkerboard center/inner/outer</td>
+<td>VWFA localizer (images)</td>
+<td>VWFA localizer (emoticons) does this need to be separate</td>
+<td>achromatic wedges (under development)</td>
+<td>isoluminant checkerboards (under development)</td>
+</tr>
+<tr>
+<td>Tr</td>
+<td>Tr in seconds</td>
+<td>0.1 to infinity [2]</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td> required</td>
+<td>required</td>
+<td>required</td>
+<td> required</td>
+<td>required</td>
+</tr>
+<tr>
+<td>innerRadius</td>
+<td>inner radius in degrees</td>
+<td>0 to infinity [0.5]</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td> required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td> required</td>
+<td>required</td>
+</tr>
+<tr>
+<td>fixFraction</td>
+<td>fraction of the time the fixation task could happen</td>
+<td>0 to 1 [0.2]</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td> required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td> required</td>
+<td>required</td>
+</tr>
+<tr>
+<td>monitor</td>
+<td>monitor/projector</td>
+<td>&nbsp;</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td> required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+</tr>
+<tr>
+<td>operatorScreen</td>
+<td>which screen/desktop the operator sees</td>
+<td>0 or 1 [0]</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td> required</td>
+<td>required</td>
+</tr>
+<tr>
+<td>subjectScreen</td>
+<td>which screen/desktop the subject sees</td>
+<td>0 or 1 [1]</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td> required</td>
+<td>required</td>
+</tr>
+<tr>
+<td>numScans</td>
+<td>number of scans to run in a parameter file driven session</td>
+<td>1 to infinity</td>
+<td>required in param file, N/A in dynamic</td>
+<td>required in param file, N/A in dynamic</td>
+<td>required in param file, N/A in dynamic</td>
+<td>required in param file, N/A in dynamic</td>
+<td>required in param file, N/A in dynamic</td>
+<td>required in param file, N/A in dynamic</td>
+<td>required in param file, N/A in dynamic</td>
+<td>required in param
+file, N/A in dynamic</td>
+<td>required in param file, N/A in dynamic</td>
+<td>required in param file, N/A in dynamic</td>
+<td>required in param file, N/A in dynamic</td>
+<td>required in param file, N/A in dynamic</td>
+<td>required in param file, N/A in dynamic</td>
+</tr>
+<tr>
+<td>preScanRest</td>
+<td>rest condition before stimulus, or ''off condition'' stimulus</td>
+<td>0 to infinity [12]</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td> required</td>
+<td>required</td>
+<td>N/A</td>
+<td>required</td>
+<td>required</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+<td>required</td>
+</tr>
+<tr>
+<td>postScanRest</td>
+<td>rest condition after stimulus ends</td>
+<td>0 to infinity [12]</td>
+<td>N/A</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td> required</td>
+<td>required</td>
+<td>N/A</td>
+<td>required</td>
+<td>required</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+<td>required</td>
+</tr>
+<tr>
+<td>stimDuration</td>
+<td>duration of stimulus in seconds</td>
+<td>eps to infinity [0.75]</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+<td>N/A</td>
+<td>N/A</td>
+<td> N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">stimDurationA</td>
+<td style="vertical-align: top;">duration of stimulus A in seconds</td>
+<td style="vertical-align: top;">eps to infinitiy [1]<br>
+</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">required</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">stimDurationB</td>
+<td style="vertical-align: top;">duration of stimulus B in seconds</td>
+<td style="vertical-align: top;">eps to infinitiy [1]</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">required</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">stimDurationRest</td>
+<td style="vertical-align: top;">duration of inter-block rest in
+seconds</td>
+<td style="vertical-align: top;">eps to infinitiy [1]</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">required</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+</tr>
+<tr>
+<td>period</td>
+<td>period for traveling wave stimuli, or on+off time in others,
+in seconds</td>
+<td>eps to infinity [24]</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td> N/A</td>
+<td>required</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+<td> required</td>
+</tr>
+<tr>
+<td>numCycles</td>
+<td>number of full cycles to display, in seconds</td>
+<td>1 to infinity [10]</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td> required</td>
+<td>required</td>
+<td> N/A</td>
+<td>required</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+<td>required</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">numReps<br>
+</td>
+<td style="vertical-align: top;">number of AB repetitions per
+block<br>
+</td>
+<td style="vertical-align: top;">1 to infinity [5]<br>
+</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">required</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">numBlocks<br>
+</td>
+<td style="vertical-align: top;">number of ABABrest blocks per
+scan<br>
+</td>
+<td style="vertical-align: top;">1 to infinity [10]<br>
+</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">required</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+<td style="vertical-align: top;">N/A</td>
+</tr>
+<tr>
+<td>contrast</td>
+<td>stimulus contrast</td>
+<td>0 to 1 [1]</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td> N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>outerRadius</td>
+<td>outer radius for wedges or dots</td>
+<td>&gt;0.5 [12]</td>
+<td>required</td>
+<td>required</td>
+<td>required (aperture for field of dots)</td>
+<td>N/A</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>required</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+<td>required</td>
+</tr>
+<tr>
+<td>wedgeWidth</td>
+<td>width of wedges in rotating wedge, in degrees</td>
+<td>0.36 to 360 degrees [45]</td>
+<td>required</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td> N/A</td>
+<td> N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>dutyCycle</td>
+<td>width of expanding/contracting ring, in percent</td>
+<td>0 to 100 [25]</td>
+<td>N/A</td>
+<td>required</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td> N/A</td>
+<td> N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>animFreq</td>
+<td>drifting or flickering frequency, in Hz</td>
+<td>0 to infinity [0.2]</td>
+<td>required</td>
+<td>required</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+<td>required</td>
+<td> required</td>
+<td>required</td>
+<td>required</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+<td> required</td>
+</tr>
+<tr>
+<td>colorA</td>
+<td>first color for flickering checkerboards, as comma-separated
+RGB triplet</td>
+<td>0 to 1 for each channel [1,0,0]</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td> required</td>
+<td>required</td>
+<td>N/A</td>
+<td> N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+</tr>
+<tr>
+<td>colorB</td>
+<td>second color for flickering checkerboards, as comma-separated
+RGB triplet</td>
+<td>0 to 1 for each channel [1,0,0]</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td> required</td>
+<td>required</td>
+<td>N/A</td>
+<td> N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+</tr>
+<tr>
+<td>colorBackground</td>
+<td>background color for flickering checkerboards, as
+comma-separated RGB triplet</td>
+<td>0 to 1 for each channel [1,0,0]</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td> N/A</td>
+<td>required</td>
+<td>required</td>
+<td>N/A</td>
+<td> N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+<td>required</td>
+</tr>
+<tr>
+<td>timeBase</td>
+<td>whether timing is advanced by clock time or triggers, for
+flickering checkerboards</td>
+<td>1 (time based) or 0 (trigger based) [1]</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+<td>N/A</td>
+<td>N/A</td>
+<td> N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+</tr>
+<tr>
+<td>fixationStyle</td>
+<td>whether fixation mark only rotates (1) or rotates and changes
+color (2)</td>
+<td>1 or 2</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td> required</td>
+<td>required</td>
+<td>N/A</td>
+<td> N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+</tr>
+<tr>
+<td>Ralpha</td>
+<td>eccentricity border between center and inner surround for
+center/inner surround/outer surround drifting checkerboard, in degrees</td>
+<td>&lt;Rbeta [1.0]</td>
+<td>N/A</td>
+<td> N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td> N/A</td>
+<td>required</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Rbeta</td>
+<td>eccentricity border between inner and outer surrounds for
+center/inner surround/outer surround drifting checkerboard, in degrees</td>
+<td>Ralpha&lt;Rbeta&lt;outerRadius [2.0]</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td> N/A</td>
+<td>required</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>pairWedge</td>
+<td>whether a second wedge is drawn at 180 degrees from the first
+wedge for rotating wedge scans </td>
+<td>0 (no) or 1 (yes) [0]</td>
+<td>required</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td> N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>numWedgePairs</td>
+<td>number of wedge pairs</td>
+<td>1 to anything [8]</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td> required</td>
+<td>required</td>
+<td>N/A</td>
+<td> N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+</tr>
+<tr>
+<td>ringWidth</td>
+<td>width of rings (degrees of visual angle)</td>
+<td>anything [1.0]</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td> required</td>
+<td>required</td>
+<td>N/A</td>
+<td> N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>required</td>
+</tr>
+</tbody>
+</table>
+
+
+    </body>
+</html>
