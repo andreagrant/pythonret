@@ -81,7 +81,7 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
     white=[1.0,1.0,1.0]
     gray=[0.0,0.0,0.0]
     black = [-1.0,-1.0,-1.0]
-    gridgray=[0.5,0.5,0.5]
+    gridgray=[0.25,0.25,0.25]
     numRadialCycles = 0.75/1.2
     numAngularCycles = 4.0
     wedgeEdges = numpy.linspace(0.0,360.0,9)
@@ -171,13 +171,15 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
     fix2 = visual.ShapeStim(winSub,pos=[0.0,0.0],vertices=((-0.15,0),(0.15,0.0)),lineWidth=3.0,
                             lineColor=black,lineColorSpace='rgb',autoLog=False,units='deg')
     #add to the fixation with a faint background polar grid
-    gridRadii=numpy.zeros((6,1))
+    gridRadii=numpy.zeros((8,1))
     gridRadii[0]=IR
     gridRadii[1]=2*IR
     gridRadii[2]=4*IR
     gridRadii[3]=6*IR
     gridRadii[4]=8*IR
-    gridRadii[5]=OR
+    gridRadii[5]=16*IR
+    gridRadii[6]=32*IR
+    gridRadii[7]=OR
     gridCircle=visual.Circle(winSub,radius=gridRadii[0],edges=128,lineColor=gridgray,lineColorSpace='rgb',autoLog=False)
     gridEnds=numpy.zeros((8,2))
     gridEnds[0,0]=0
@@ -250,6 +252,8 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
 #    ringMask.draw()
     if thisPlatform<3:
         gridCircle.draw()
+        gridCircle.setRadius(gridRadii[0])
+        gridCircle.draw()
         gridCircle.setRadius(gridRadii[1])
         gridCircle.draw()
         gridCircle.setRadius(gridRadii[2])
@@ -260,6 +264,11 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
         gridCircle.draw()
         gridCircle.setRadius(gridRadii[5])
         gridCircle.draw()
+        gridCircle.setRadius(gridRadii[6])
+        gridCircle.draw()
+        gridCircle.setRadius(gridRadii[7])
+        gridCircle.draw()
+        gridSpoke.setEnd(gridEnds[0,])
         gridSpoke.draw()
         gridSpoke.setEnd(gridEnds[1,])
         gridSpoke.draw()
@@ -417,6 +426,19 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
         if fixTimeCheck >fixDuration: #timer expired--reset ori
             fixOri=0
 
+
+        fix1.setOri(fixOri)
+        fix2.setOri(fixOri)
+
+        ring1.draw()
+        ring2.draw()
+        ring3.draw()
+        ring4.draw()
+        ring5.draw()
+        ring6.draw()
+        ring7.draw()
+        ring8.draw()
+        ringMask.draw()
         #draw grid only if NOT linux, where it looks bad....
         if thisPlatform<3:
             gridCircle.setRadius(gridRadii[0])
@@ -430,6 +452,10 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
             gridCircle.setRadius(gridRadii[4])
             gridCircle.draw()
             gridCircle.setRadius(gridRadii[5])
+            gridCircle.draw()
+            gridCircle.setRadius(gridRadii[6])
+            gridCircle.draw()
+            gridCircle.setRadius(gridRadii[7])
             gridCircle.draw()
             gridSpoke.draw()
             gridSpoke.setEnd(gridEnds[0,])
@@ -448,18 +474,6 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
             gridSpoke.draw()
             gridSpoke.setEnd(gridEnds[7,])
             gridSpoke.draw()
-        fix1.setOri(fixOri)
-        fix2.setOri(fixOri)
-
-        ring1.draw()
-        ring2.draw()
-        ring3.draw()
-        ring4.draw()
-        ring5.draw()
-        ring6.draw()
-        ring7.draw()
-        ring8.draw()
-        ringMask.draw()
         fix0.draw()
         fix1.draw()
         fix2.draw()
