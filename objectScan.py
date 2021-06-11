@@ -1,12 +1,11 @@
 #import libraries
-from __future__ import division
 from psychopy import visual
 from psychopy import gui
 from psychopy import core
 from psychopy import data
 from psychopy import misc
 from psychopy import event
-from psychopy import filters
+from psychopy.visual import filters
 from psychopy import monitors
 import time, numpy, random
 #import retinotopyScans
@@ -20,7 +19,7 @@ import datetime
 #############################################################################
 ################### object localizer ###################################
 #############################################################################
-    
+
 def objectScan(scanDict, screenSize=[1024,768], direction = 1.0):
 #def motionScan(scanInfo, screen, IR = 0.5, OR = 12.0, dotSpeed=5.8, dotMotion='radial',direction = 1.0):
     scanLength = float(scanDict['numCycles']*scanDict['period']+scanDict['preScanRest'])
@@ -63,7 +62,7 @@ def objectScan(scanDict, screenSize=[1024,768], direction = 1.0):
         msgScanTr.draw()
         winOp.flip()
     #open subject window
-    winSub = visual.Window(screenSize,monitor=scanDict['monCalFile'],units="deg",screen=scanDict['subjectScreen'], 
+    winSub = visual.Window(screenSize,monitor=scanDict['monCalFile'],units="deg",screen=scanDict['subjectScreen'],
                        color=[0.0,0.0,0.0],colorSpace='rgb',fullscr=False,allowGUI=False)
     #parse out vars from scanDict
     IR=scanDict['innerRadius']
@@ -74,7 +73,8 @@ def objectScan(scanDict, screenSize=[1024,768], direction = 1.0):
     fixPercentage=scanDict['fixFraction']
     fixDuration=0.2
     respDuration=1.0
-    subjectResponse=numpy.zeros((numpy.ceil(scanLength*60/100),1))
+    dummyLength=int(numpy.ceil(scanLength*60/100))
+    subjectResponse=numpy.zeros(( dummyLength,1))
     subjectResponse[:]=numpy.nan
     white=[1.0,1.0,1.0]
     gray=[0.0,0.0,0.0]
@@ -111,7 +111,7 @@ def objectScan(scanDict, screenSize=[1024,768], direction = 1.0):
     numIntact=len(intactImages)
     intactImNum=numpy.arange(numIntact)
     numpy.random.shuffle(intactImNum)
-    #now do this for the scrambleds    
+    #now do this for the scrambleds
     myPath=os.path.dirname(os.path.realpath(__file__))
     Aimages=glob.glob(os.path.join(myPath,'scrambled_images512','*.png'))
     if len(Aimages)==0:
@@ -131,7 +131,7 @@ def objectScan(scanDict, screenSize=[1024,768], direction = 1.0):
     numScram=len(scramImages)
     scramImNum=numpy.arange(numScram)
     numpy.random.shuffle(scramImNum)
-    
+
     #now make a SINGLE list of the filenames, alternating intacts and scrambleds
     #this makes the display loop much easier--just show the next image--all the work
     #of sequencing them is done here
@@ -187,8 +187,8 @@ def objectScan(scanDict, screenSize=[1024,768], direction = 1.0):
     imageStimDict[currentImageNumber]=visual.ImageStim(winSub,image=imageNameSequence[currentImageNumber])
 #    nextImage=visual.ImageStim(winSub,image=imageNameSequence[currentImageNumber+1])
     nextImLoadedFlag=0
-    
-#    #debug 
+
+#    #debug
 #    for iD in range(504):
 #        print(iD)
 #        print(imageNameSequence[iD])
@@ -201,13 +201,13 @@ def objectScan(scanDict, screenSize=[1024,768], direction = 1.0):
                             fillColor=black,fillColorSpace='rgb',autoLog=False)
     fix2 = visual.ShapeStim(winSub,pos=[0.0,0.0],vertices=((-0.15,0),(0.15,0.0)),lineWidth=3.0,
                             lineColor=black,lineColorSpace='rgb',autoLog=False)
-    
-    #wait for subject    
+
+    #wait for subject
     if direction==1:
         scanNameText='Object localizer. On condition is %s images' % ('intact')
     else:
         scanNameText='Object localizer. On condition is %s images' % ('scrambled')
-        
+
     msg1=visual.TextStim(winSub,pos=[0,+2],text='%s \n\nSubject: press a button when ready.'%scanNameText)
     msg1.draw()
     winSub.flip()
@@ -237,7 +237,7 @@ def objectScan(scanDict, screenSize=[1024,768], direction = 1.0):
         core.quit()
     else:
         event.clearEvents()
-    
+
     #start the timer
     scanTimer=core.Clock()
     startTime=scanTimer.getTime()
@@ -246,11 +246,11 @@ def objectScan(scanDict, screenSize=[1024,768], direction = 1.0):
     fix1.draw()
     fix2.draw()
     winSub.flip()
-    
+
     #draw the time
     timeNow=scanTimer.getTime()
 #    timeMsg=visual.TextStim(winSub,pos=[-screenSize[0]/2+100,-screenSize[1]/2+15],units='pix',text= 't = %.3f' %timeNow)
-    if screenCount==2:     
+    if screenCount==2:
         timeMsg = visual.TextStim(winOp,pos=[0,-0.5],text = 't = %.3f' %timeNow)
         timeMsg.draw()
     loopCounter=0
@@ -270,12 +270,12 @@ def objectScan(scanDict, screenSize=[1024,768], direction = 1.0):
         timeNow=scanTimer.getTime()
         deltaT=timeNow-timeBefore
         runningT=timeNow-startTime
-        
-        #every 100 frames, decide if fixation should change or not    
+
+        #every 100 frames, decide if fixation should change or not
         if loopCounter%100 ==0 and loopCounter>10:
            #flip a coin to decide
             flipCoin=numpy.random.ranf()
-            if flipCoin<fixPercentage: 
+            if flipCoin<fixPercentage:
                 #reset timers/change ori
                 fixOri=45
                 fixTimer.reset()
@@ -296,10 +296,10 @@ def objectScan(scanDict, screenSize=[1024,768], direction = 1.0):
             #delete the previous one (well, the 2nd previous one)
             if currentImageNumber>3:
                 del imageStimDict[currentImageNumber-1]
-            #reset the flag            
+            #reset the flag
             nextImLoadedFlag=1
 
-        #every 0.5 seconds, change the image  
+        #every 0.5 seconds, change the image
         if miniEpochTime>0.5:
             #bump the image counter
             currentImageNumber+=1
@@ -318,9 +318,9 @@ def objectScan(scanDict, screenSize=[1024,768], direction = 1.0):
 #            print(imageStimDict[currentImageNumber-1])
 #            print(imageStimDict[currentImageNumber])
 #            print(imageStimDict[currentImageNumber+1])
-#        
+#
         fix1.setOri(fixOri)
-        fix2.setOri(fixOri)   
+        fix2.setOri(fixOri)
         fix0.draw()
         fix1.draw()
         fix2.draw()
@@ -339,9 +339,9 @@ def objectScan(scanDict, screenSize=[1024,768], direction = 1.0):
                 core.quit()
             elif key in responseKeys and respTimeCheck<respDuration:
                 subjectResponse[numCoins]=1
-        
+
         loopCounter+=1
-         
+
     #check responses
     findResp=subjectResponse[~numpy.isnan(subjectResponse)]
     calcResp=findResp[findResp==1]
@@ -350,7 +350,7 @@ def objectScan(scanDict, screenSize=[1024,768], direction = 1.0):
         percentCorrect=100.0*float(numCorrect)/(float(numCoins))
     else:
         percentCorrect=100.0
-    
+
     msgText='You got %.0f %% correct!' %(percentCorrect,)
     msgPC=visual.TextStim(winSub,pos=[0,+3],text=msgText)
     msgPC.draw()

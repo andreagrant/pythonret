@@ -1,12 +1,11 @@
 #import libraries
-from __future__ import division
 from psychopy import visual
 from psychopy import gui
 from psychopy import core
 from psychopy import data
 from psychopy import misc
 from psychopy import event
-from psychopy import filters
+from psychopy.visual import filters
 from psychopy import monitors
 import time, numpy, random
 #import retinotopyScans
@@ -63,9 +62,9 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
         winOp.flip()
 
     #open subject window
-    winSub = visual.Window(screenSize,monitor=scanDict['monCalFile'],units='deg',screen=scanDict['subjectScreen'], 
+    winSub = visual.Window(screenSize,monitor=scanDict['monCalFile'],units='deg',screen=scanDict['subjectScreen'],
                        color=[0.0,0.0,0.0],colorSpace='rgb',fullscr=False,allowGUI=False)
-                          
+
     #parse out vars from scanDict
     IR=scanDict['innerRadius']
     OR=scanDict['outerRadius']
@@ -76,7 +75,8 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
     dutyCycle=scanDict['dutyCycle']
     fixDuration = 0.2
     respDuration = 1.0
-    subjectResponse = numpy.zeros((numpy.ceil(scanLength*60/100),1))
+    dummyLength=int(numpy.ceil(scanLength*60/100))
+    subjectResponse=numpy.zeros(( dummyLength,1))
     subjectResponse[:]=numpy.nan
     white=[1.0,1.0,1.0]
     gray=[0.0,0.0,0.0]
@@ -103,7 +103,7 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
     #print 'IR', IR
     quitKeys=['q','escape']
     radialUnits = 2.0
-    debugVar=numpy.zeros((scanLength*60,9))
+    debugVar=numpy.zeros((  int(scanLength*60) ,9))
     ringRate = (OR - (IR+width))/scanDict['period']
     contrast=scanDict['contrast']
 #    ringRadPhi=numpy.zeros((8,1))
@@ -111,58 +111,58 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
     ringRadPhiInit=numpy.random.rand(8)
     ringRadPhi=ringRadPhiInit
 #    for iP in range(8):
-#        ringRadPhiInit[iP]=numpy.random.random()*2.0*math.pi    
-    
-    
+#        ringRadPhiInit[iP]=numpy.random.random()*2.0*math.pi
+
+
     startOR = OR - scanDict['preScanRest']*ringRate
     #needs to be direction based?
-    
+
     ring1 = visual.RadialStim(winSub,pos=[0,0],tex='sqrXsqr',radialCycles = numRadialCycles*OR*radialUnits,
                               angularCycles = numAngularCycles,angularPhase=0,size=startOR*radialUnits,color=1,
-                              visibleWedge = (wedgeEdges[0],wedgeEdges[8]), radialPhase = ringRadPhiInit[0], 
+                              visibleWedge = (wedgeEdges[0],wedgeEdges[8]), radialPhase = ringRadPhiInit[0],
                               contrast=contrast, interpolate=False, autoLog=False)
     ring2 = visual.RadialStim(winSub,pos=[0,0],tex='sqrXsqr',radialCycles = numRadialCycles*OR*radialUnits,
                               angularCycles = numAngularCycles,angularPhase=0,size=startOR*radialUnits,color=1,
-                              visibleWedge = (wedgeEdges[1],wedgeEdges[8]), radialPhase = ringRadPhiInit[1], 
+                              visibleWedge = (wedgeEdges[1],wedgeEdges[8]), radialPhase = ringRadPhiInit[1],
                               contrast=contrast, interpolate=False, autoLog=False)
     ring3 = visual.RadialStim(winSub,pos=[0,0],tex='sqrXsqr',radialCycles = numRadialCycles*OR*radialUnits,
                               angularCycles = numAngularCycles,angularPhase=0,size=startOR*radialUnits,color=1,
-                              visibleWedge =(wedgeEdges[2],wedgeEdges[8]), radialPhase = ringRadPhiInit[2], 
+                              visibleWedge =(wedgeEdges[2],wedgeEdges[8]), radialPhase = ringRadPhiInit[2],
                               contrast=contrast, interpolate=False, autoLog=False)
     ring4 = visual.RadialStim(winSub,pos=[0,0],tex='sqrXsqr',radialCycles = numRadialCycles*OR*radialUnits,
                               angularCycles = numAngularCycles,angularPhase=0,size=startOR*radialUnits,color=1,
-                              visibleWedge = (wedgeEdges[3],wedgeEdges[8]), radialPhase = ringRadPhiInit[3], 
+                              visibleWedge = (wedgeEdges[3],wedgeEdges[8]), radialPhase = ringRadPhiInit[3],
                               contrast=contrast, interpolate=False, autoLog=False)
     ring5 = visual.RadialStim(winSub,pos=[0,0],tex='sqrXsqr',radialCycles = numRadialCycles*OR*radialUnits,
                               angularCycles = numAngularCycles,angularPhase=0,size=startOR*radialUnits,color=1,
-                              visibleWedge = (wedgeEdges[4],wedgeEdges[8]), radialPhase = ringRadPhiInit[4], 
+                              visibleWedge = (wedgeEdges[4],wedgeEdges[8]), radialPhase = ringRadPhiInit[4],
                               contrast=contrast, interpolate=False, autoLog=False)
     ring6 = visual.RadialStim(winSub,pos=[0,0],tex='sqrXsqr',radialCycles = numRadialCycles*OR*radialUnits,
                               angularCycles = numAngularCycles,angularPhase=0,size=startOR*radialUnits,color=1,
-                              visibleWedge = (wedgeEdges[5],wedgeEdges[8]), radialPhase = ringRadPhiInit[5], 
+                              visibleWedge = (wedgeEdges[5],wedgeEdges[8]), radialPhase = ringRadPhiInit[5],
                               contrast=contrast, interpolate=False, autoLog=False)
     ring7 = visual.RadialStim(winSub,pos=[0,0],tex='sqrXsqr',radialCycles = numRadialCycles*OR*radialUnits,
                               angularCycles = numAngularCycles,angularPhase=0,size=startOR*radialUnits,color=1,
-                              visibleWedge = (wedgeEdges[6],wedgeEdges[8]), radialPhase = ringRadPhiInit[6], 
+                              visibleWedge = (wedgeEdges[6],wedgeEdges[8]), radialPhase = ringRadPhiInit[6],
                               contrast=contrast, interpolate=False, autoLog=False)
     ring8 = visual.RadialStim(winSub,pos=[0,0],tex='sqrXsqr',radialCycles = numRadialCycles*OR*radialUnits,
                               angularCycles = numAngularCycles,angularPhase=0,size=startOR*radialUnits,color=1,
-                              visibleWedge = (wedgeEdges[7],wedgeEdges[8]), radialPhase = ringRadPhiInit[7], 
+                              visibleWedge = (wedgeEdges[7],wedgeEdges[8]), radialPhase = ringRadPhiInit[7],
                               contrast=contrast, interpolate=False, autoLog=False)
     #create a gray circle to mask the inside of the radialStim
     ringMask=visual.Circle(winSub,radius=startOR-width,edges=32,lineColor=gray, lineColorSpace='rgb',
                            fillColor=gray,fillColorSpace='rgb',autoLog=False,units='deg',opacity=1.0)
-                           
-                           
-                           
+
+
+
     #try a new mask
-    mask=numpy.zeros((OR*100,1))                           
+    mask=numpy.zeros(( int(OR*100),1))
     ringRadPhiDelta=ringRadPhiInit
     #driftFreq = 0.2 #Hz after L&H
     driftFreq = scanDict['animFreq']
-    driftReverseFreq = 1.0 #Hz 
-   
-    
+    driftReverseFreq = 1.0 #Hz
+
+
     fix0=visual.Circle(winSub,radius=IR/2.0,edges=32,lineColor=gray,lineColorSpace='rgb',
                        fillColor=gray,fillColorSpace='rgb',autoLog=False,units='deg')
     fix1 = visual.ShapeStim(winSub,pos=[0.0,0.0],vertices=((0.0,-0.15),(0.0,0.15)),lineWidth=3.0,
@@ -180,21 +180,21 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
     gridRadii[5]=OR
     gridCircle=visual.Circle(winSub,radius=gridRadii[0],edges=128,lineColor=gridgray,lineColorSpace='rgb',autoLog=False)
     gridEnds=numpy.zeros((8,2))
-    gridEnds[0,0]=0 
-    gridEnds[0,1]=OR 
-    gridEnds[1,0]=OR 
+    gridEnds[0,0]=0
+    gridEnds[0,1]=OR
+    gridEnds[1,0]=OR
     gridEnds[1,1]=OR
-    gridEnds[2,0]=OR 
-    gridEnds[2,1]=0 
-    gridEnds[3,0]=OR 
-    gridEnds[3,1]=-OR 
-    gridEnds[4,0]=0 
-    gridEnds[4,1]=-OR 
-    gridEnds[5,0]=-OR 
+    gridEnds[2,0]=OR
+    gridEnds[2,1]=0
+    gridEnds[3,0]=OR
+    gridEnds[3,1]=-OR
+    gridEnds[4,0]=0
+    gridEnds[4,1]=-OR
+    gridEnds[5,0]=-OR
     gridEnds[5,1]=-OR
-    gridEnds[6,0]=-OR 
+    gridEnds[6,0]=-OR
     gridEnds[6,1]=0
-    gridEnds[7,0]=-OR 
+    gridEnds[7,0]=-OR
     gridEnds[7,1]=OR
     gridSpoke=visual.Line(winSub,start=(0,0),end=(0,OR),lineColor=gridgray,lineColorSpace='rgb',autoLog=False)
 
@@ -202,8 +202,8 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
         scanNameText='contracting ring, %2.1f%% duty cycle' %dutyCycle
     else:
         scanNameText='expanding ring, %2.1f%% duty cycle' %dutyCycle
-        
-    #wait for subject    
+
+    #wait for subject
     msg1=visual.TextStim(winSub,pos=[0,+2],text='%s \n\nSubject: press a button when ready.'%scanNameText)
     msg1.draw()
     winSub.flip()
@@ -233,11 +233,11 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
         core.quit()
     else:
         event.clearEvents()
-    
+
     #start the timer
     scanTimer=core.Clock()
     startTime=scanTimer.getTime()
-    
+
     #draw the stimulus
 #    ring1.draw()
 #    ring2.draw()
@@ -282,7 +282,7 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
     #draw the time
     timeNow=scanTimer.getTime()
 #    timeMsg=visual.TextStim(winSub,pos=[-screenSize[0]/2+100,-screenSize[1]/2+15],units='pix',text= 't = %.3f' %timeNow)
-    if screenCount==2:     
+    if screenCount==2:
         timeMsg = visual.TextStim(winOp,pos=[0,-0.5],text = 't = %.3f' %timeNow)
         timeMsg.draw()
     loopCounter=0
@@ -325,7 +325,7 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
 #        debugVar[loopCounter,1]=ringIR
 #        debugVar[loopCounter,2]=ringOR
 
-            
+
 
         #set the ORs
         ring1.setSize(ringOR*radialUnits)
@@ -345,7 +345,7 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
         ring8.setSize(ringOR*radialUnits)
         ring8.setRadialCycles(ringOR*radialUnits*numRadialCycles)
         ringMask.setRadius(ringIR)
-        #experimental mask        
+        #experimental mask
 #        mask[0:ringIR*100]=0.5
 #        mask[ringIR*100:ringOR*100]=1
 #        mask[ringOR*100:]=0
@@ -357,11 +357,11 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
 #        ring6.setMask(mask)
 #        ring7.setMask(mask)
 #        ring8.setMask(mask)
-        
+
         #new phase
         #ringRadPhi = driftFreq*deltaT
 #        ringRadPhi = ringRadPhi + 2.0*math.pi*driftFreq*(timeNow-timeBefore)
-        #new direction of phase drift--set randomly but not too often  
+        #new direction of phase drift--set randomly but not too often
 #        phaseTimeCheck = phaseTimer.getTime()
 ##        debugVar[loopCounter,3]=phaseTimeCheck
 #        phaseCoin=numpy.random.ranf()
@@ -377,8 +377,8 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
 #        ring6.setRadialPhase(-1.0*ringRadPhi*phaseSign)
 #        ring7.setRadialPhase(ringRadPhi*phaseSign)
 #        ring8.setRadialPhase(-1.0*ringRadPhi*phaseSign)
-        
-            
+
+
         setSign=math.floor(driftReverseFreq*deltaT/3.0)
         if setSign%2==0:
             phaseSign=1.0
@@ -405,7 +405,7 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
         if loopCounter%100 ==0 and loopCounter>10:
             #flip a coin to decide
             flipCoin=numpy.random.ranf()
-            if flipCoin<fixPercentage: 
+            if flipCoin<fixPercentage:
                 #reset timers/change ori
                 fixOri=45
                 fixTimer.reset()
@@ -416,7 +416,7 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
         respTimeCheck=respTimer.getTime()
         if fixTimeCheck >fixDuration: #timer expired--reset ori
             fixOri=0
-        
+
         #draw grid only if NOT linux, where it looks bad....
         if thisPlatform<3:
             gridCircle.setRadius(gridRadii[0])
@@ -431,26 +431,26 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
             gridCircle.draw()
             gridCircle.setRadius(gridRadii[5])
             gridCircle.draw()
-            gridSpoke.draw()    
+            gridSpoke.draw()
             gridSpoke.setEnd(gridEnds[0,])
-            gridSpoke.draw()  
+            gridSpoke.draw()
             gridSpoke.setEnd(gridEnds[1,])
-            gridSpoke.draw()  
+            gridSpoke.draw()
             gridSpoke.setEnd(gridEnds[2,])
-            gridSpoke.draw()  
+            gridSpoke.draw()
             gridSpoke.setEnd(gridEnds[3,])
-            gridSpoke.draw()  
+            gridSpoke.draw()
             gridSpoke.setEnd(gridEnds[4,])
-            gridSpoke.draw()  
+            gridSpoke.draw()
             gridSpoke.setEnd(gridEnds[5,])
-            gridSpoke.draw()  
+            gridSpoke.draw()
             gridSpoke.setEnd(gridEnds[6,])
-            gridSpoke.draw()  
+            gridSpoke.draw()
             gridSpoke.setEnd(gridEnds[7,])
-            gridSpoke.draw()  
+            gridSpoke.draw()
         fix1.setOri(fixOri)
-        fix2.setOri(fixOri)   
-            
+        fix2.setOri(fixOri)
+
         ring1.draw()
         ring2.draw()
         ring3.draw()
@@ -478,9 +478,9 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
                 core.quit()
             elif key in responseKeys and respTimeCheck<respDuration:
                 subjectResponse[numCoins]=1
-        
+
         loopCounter+=1
-        
+
     #summarize responses
     findResp=subjectResponse[~numpy.isnan(subjectResponse)]
     calcResp=findResp[findResp==1]
@@ -489,7 +489,7 @@ def ringScan(scanDict, screenSize=[1024,768], direction = 1.0):
         percentCorrect=100.0*float(numCorrect)/(float(numCoins))
     else:
         percentCorrect=100.0
-    
+
     msgText='You got %.0f %% correct!' %(percentCorrect,)
     msgPC=visual.TextStim(winSub,pos=[0,+3],text=msgText)
     msgPC.draw()

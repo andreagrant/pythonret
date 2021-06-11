@@ -1,12 +1,11 @@
 #import libraries
-from __future__ import division
 from psychopy import visual
 from psychopy import gui
 from psychopy import core
 from psychopy import data
 from psychopy import misc
 from psychopy import event
-from psychopy import filters
+from psychopy.visual import filters
 from psychopy import monitors
 import time, numpy, random
 #import retinotopyScans
@@ -16,7 +15,7 @@ import os
 import glob
 import imp
 import datetime
-   
+
 ##########################################################################
 ##########################################################################
 ################################### VWFA localizer ############################
@@ -26,14 +25,14 @@ import datetime
 def VWFAlocImages(scanDict,screenSize=[1024,768]):
     #objects from
     #http://stims.cnbc.cmu.edu/Image%20Databases/TarrLab/Objects/
-    #faces from 
-    #http://www.cl.cam.ac.uk/research/dtg/attarchive/facedatabase.html    
+    #faces from
+    #http://www.cl.cam.ac.uk/research/dtg/attarchive/facedatabase.html
 #
 #more faces
 #http://tarrlab.cnbc.cmu.edu/newsite/index.php?option=com_content&view=article&id=51&Itemid=61
 #more objects
-#http://stims.cnbc.cmu.edu/Image%20Databases/BOSS/    
-    
+#http://stims.cnbc.cmu.edu/Image%20Databases/BOSS/
+
     #scenes
     #http://pirsquared.org/research/vhatdb/full/
     #houses
@@ -44,30 +43,30 @@ def VWFAlocImages(scanDict,screenSize=[1024,768]):
     #http://groups.csail.mit.edu/vision/SUN/
     #objects & chairs  from
     #http://stims.cnbc.cmu.edu/Image%20Databases/TarrLab/Objects/
-    #faces from 
-    #http://www.cl.cam.ac.uk/research/dtg/attarchive/facedatabase.html    
-     #more chairs from 
+    #faces from
+    #http://www.cl.cam.ac.uk/research/dtg/attarchive/facedatabase.html
+     #more chairs from
      #????
     white=[1.0,1.0,1.0]
     gray=[0.0,0.0,0.0]
     black=[-1.0,-1.0,-1.0]
-    
+
     fixPercentage =scanDict['fixFraction']
     fixDuration=0.25
     respDuration=1.0
     IR=scanDict['innerRadius']
     screenSize=scanDict['screenSize']
 
-    #create a designmatrix 
+    #create a designmatrix
     #there are 4 categories of things to show
     #faces, places (houses), chairs (objects), and letters (words?)
     #also need rest in there
     #so need 4 columns in design matrix
-    
+
     numTrials=210
     numImages=40*4
-    designMatrix=numpy.zeros((numTrials,4))    
-    designMatrixX=numpy.zeros((numTrials,1))    
+    designMatrix=numpy.zeros((numTrials,4))
+    designMatrixX=numpy.zeros((numTrials,1))
 
     #first N Trs are already zero--rest
     #figure out when each stim should be on
@@ -82,50 +81,50 @@ def VWFAlocImages(scanDict,screenSize=[1024,768]):
     blockLength=trialLength*trialsPerBlock
     IBIdur=10
     #A: 10-20,70-80,140-150,180-190
-    designMatrix[10:20,0]=1    
-    designMatrix[70:80,0]=1    
-    designMatrix[140:150,0]=1    
-    designMatrix[180:190,0]=1    
+    designMatrix[10:20,0]=1
+    designMatrix[70:80,0]=1
+    designMatrix[140:150,0]=1
+    designMatrix[180:190,0]=1
     #B: 20-30,60-70,120-130,190-200
-    designMatrix[20:30,1]=1    
-    designMatrix[60:70,1]=1    
-    designMatrix[120:130,1]=1    
-    designMatrix[190:200,1]=1    
-    
+    designMatrix[20:30,1]=1
+    designMatrix[60:70,1]=1
+    designMatrix[120:130,1]=1
+    designMatrix[190:200,1]=1
+
     #C: 30-40,90-100,110-120,170-180
-    designMatrix[30:40,2]=1    
-    designMatrix[90:100,2]=1    
-    designMatrix[110:120,2]=1    
-    designMatrix[170:180,2]=1    
-    
+    designMatrix[30:40,2]=1
+    designMatrix[90:100,2]=1
+    designMatrix[110:120,2]=1
+    designMatrix[170:180,2]=1
+
     #D: 40-50,80-90, 130-140, 160-170
-    designMatrix[40:50,3]=1    
-    designMatrix[80:90,3]=1    
-    designMatrix[130:140,3]=1    
-    designMatrix[160:170,3]=1    
-    
+    designMatrix[40:50,3]=1
+    designMatrix[80:90,3]=1
+    designMatrix[130:140,3]=1
+    designMatrix[160:170,3]=1
+
     #UGH i need to hack a new design matrix for the images without the rest spots in it
-    designMatrixX[10:20,0]=1    
-    designMatrixX[70:80,0]=1    
-    designMatrixX[140:150,0]=1    
-    designMatrixX[180:190,0]=1    
+    designMatrixX[10:20,0]=1
+    designMatrixX[70:80,0]=1
+    designMatrixX[140:150,0]=1
+    designMatrixX[180:190,0]=1
     #B: 20-30,60-70,120-130,190-200
-    designMatrixX[20:30,0]=1    
-    designMatrixX[60:70,0]=1    
-    designMatrixX[120:130,0]=1    
-    designMatrixX[190:200,0]=1    
-    
+    designMatrixX[20:30,0]=1
+    designMatrixX[60:70,0]=1
+    designMatrixX[120:130,0]=1
+    designMatrixX[190:200,0]=1
+
     #C: 30-40,90-100,110-120,170-180
-    designMatrixX[30:40,0]=1    
-    designMatrixX[90:100,0]=1    
-    designMatrixX[110:120,0]=1    
-    designMatrixX[170:180,0]=1    
-    
+    designMatrixX[30:40,0]=1
+    designMatrixX[90:100,0]=1
+    designMatrixX[110:120,0]=1
+    designMatrixX[170:180,0]=1
+
     #D: 40-50,80-90, 130-140, 160-170
-    designMatrixX[40:50,0]=1    
-    designMatrixX[80:90,0]=1    
-    designMatrixX[130:140,0]=1    
-    designMatrixX[160:170,0]=1    
+    designMatrixX[40:50,0]=1
+    designMatrixX[80:90,0]=1
+    designMatrixX[130:140,0]=1
+    designMatrixX[160:170,0]=1
 
 
     #length of scan in s
@@ -206,14 +205,15 @@ def VWFAlocImages(scanDict,screenSize=[1024,768]):
     Bsequence=numpy.random.randint(0,high=numInList[1],size=40)
     Csequence=numpy.random.randint(0,high=numInList[2],size=40)
     Dsequence=numpy.random.randint(0,high=numInList[3],size=40)
-    #now make one big list with all the filenames--much easier for showing them in the loop!!    
+    #now make one big list with all the filenames--much easier for showing them in the loop!!
     imageNameSequence = ['']*numImages
     Acounter=0
     Bcounter=0
     Ccounter=0
     Dcounter=0
     imCounter=0
-    for iIm in xrange(numTrials):
+    #for iIm in xrange(numTrials):?
+    for iIm in range(numTrials):
         if designMatrix[iIm,0]==1:
             #next Aimage
             imageNameSequence[imCounter]=Aimages[Asequence[Acounter]]
@@ -250,8 +250,8 @@ def VWFAlocImages(scanDict,screenSize=[1024,768]):
     imageStimDict[currentImageNumber]=visual.SimpleImageStim(winSub,image=imageNameSequence[currentImageNumber])
 
     msg1x=visual.TextStim(winSub, pos=[0,+8],text='visual wordform area localizer with images')
-    msg1a = visual.TextStim(winSub, pos=[0,+5],text='During the scan, please keep your eyes on the + in the center.',height=1)    
-    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Hit any button any time the fixation square becomes bigger.',height=1)    
+    msg1a = visual.TextStim(winSub, pos=[0,+5],text='During the scan, please keep your eyes on the + in the center.',height=1)
+    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Hit any button any time the fixation square becomes bigger.',height=1)
     msg1=visual.TextStim(winSub,pos=[0,-3],text='Subject: Hit a button when ready.',color=[1,-1,-1],colorSpace='rgb')
     msg1.draw()
     msg1a.draw()
@@ -273,12 +273,12 @@ def VWFAlocImages(scanDict,screenSize=[1024,768]):
     if thisKey in ['q','escape']:
         core.quit() #abort
     else:
-        event.clearEvents()        
+        event.clearEvents()
     responseKeys=list(scanDict['subjectResponse'])
 
 
-    msg1a = visual.TextStim(winSub, pos=[0,+5],text='   ',height=1)    
-    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Waiting for magnet',height=1)    
+    msg1a = visual.TextStim(winSub, pos=[0,+5],text='   ',height=1)
+    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Waiting for magnet',height=1)
     #msg1c.draw()
     msg1a.draw()
     msg1b.draw()
@@ -286,7 +286,7 @@ def VWFAlocImages(scanDict,screenSize=[1024,768]):
     #fix1.draw()
     #fix2.draw()
     winSub.flip()
-  
+
     #wait for trigger
     trig=None
     triggerKeys=list(scanDict['trigger'])
@@ -299,10 +299,10 @@ def VWFAlocImages(scanDict,screenSize=[1024,768]):
         core.quit()
     else: #stray key
         event.clearEvents()
-    
-    
-    
-    #start the timer            
+
+
+
+    #start the timer
     scanTimer=core.Clock()
     startTime=scanTimer.getTime()
     timeNow=scanTimer.getTime()
@@ -311,7 +311,7 @@ def VWFAlocImages(scanDict,screenSize=[1024,768]):
 #    trialTimer=core.Clock()
 #    trialTime=trialTimer.getTime()
     trialTimerNew=core.CountdownTimer()
-    fixTimer=core.Clock() 
+    fixTimer=core.Clock()
     respTimer=core.Clock()
     #start counters for each list
     Acounter=0
@@ -320,13 +320,13 @@ def VWFAlocImages(scanDict,screenSize=[1024,768]):
     respCounter=0
     numCoins=0
     currentImageNumber = -1
-    #loop through the number of trials, presenting appropriate stimulus or rest 
-    for iTrial in xrange(numTrials):
+    #loop through the number of trials, presenting appropriate stimulus or rest
+    for iTrial in range(numTrials):
         #print iTrial
-#        print designMatrix[iTrial,:]  
-        respTimer.reset()        
+#        print designMatrix[iTrial,:]
+        respTimer.reset()
         flipCoin=numpy.random.ranf()
-        if flipCoin<fixPercentage: 
+        if flipCoin<fixPercentage:
             #change fixation size
             fixSize*=1.2
             fixTimer.reset()
@@ -335,14 +335,14 @@ def VWFAlocImages(scanDict,screenSize=[1024,768]):
             subjectResponse[numCoins]=0
         fix0.setWidth(fixSize)
         fix0.setHeight(fixSize)
-        
+
         if designMatrixX[iTrial,0]==1:
             #stim
             #load next image
             currentImageNumber+=1
             if currentImageNumber+1<len(imageNameSequence): #don't load an image past the last one!
                 imageStimDict[currentImageNumber+1]=visual.ImageStim(winSub,image=imageNameSequence[currentImageNumber+1])
-                
+
             #delete the 2nd previous one
             if currentImageNumber>3:
                 del imageStimDict[currentImageNumber-1]
@@ -354,14 +354,14 @@ def VWFAlocImages(scanDict,screenSize=[1024,768]):
             drawStim=1
             winSub.flip()
         else:
-            #rest 
+            #rest
             drawFix=1
             drawStim=0
             fix0.draw()
             #fix1.draw()
             #fix2.draw()
 
-        #dispay stim for stimDuration amount of time 
+        #dispay stim for stimDuration amount of time
         trialTimerNew.add(stimDur)
         while trialTimerNew.getTime()>0:
             timeNow = scanTimer.getTime()
@@ -378,7 +378,7 @@ def VWFAlocImages(scanDict,screenSize=[1024,768]):
                 imageStimDict[currentImageNumber].draw()
             if drawFix==1:
                 fix0.draw()
-                
+
             # msg.setText('t = %.3f' %timeNow)
             # msg.draw()
             # msgScanLength.draw()
@@ -391,10 +391,10 @@ def VWFAlocImages(scanDict,screenSize=[1024,768]):
                 elif key in responseKeys and respTimeCheck<respDuration:
                     subjectResponse[numCoins]=1
 
-        #then show fixation for ISI time 
+        #then show fixation for ISI time
         trialTimerNew.add(trialLength-stimDur)
         while trialTimerNew.getTime()>0:
-            #then show fixation for ISI time 
+            #then show fixation for ISI time
             timeNow = scanTimer.getTime()
             fixTimeCheck=fixTimer.getTime()
             respTimeCheck=respTimer.getTime()
@@ -423,7 +423,7 @@ def VWFAlocImages(scanDict,screenSize=[1024,768]):
         percentCorrect=100.0*float(numCorrect)/(float(numCoins))
     else:
         percentCorrect=100.0
-    
+
     msgText='You got %.0f %% correct!' %(percentCorrect,)
     msgPC=visual.TextStim(winSub,pos=[0,+3],text=msgText)
     msgPC.draw()
@@ -441,5 +441,3 @@ def VWFAlocImages(scanDict,screenSize=[1024,768]):
     core.wait(2)
     # winOp.close()
     winSub.close()
-
-

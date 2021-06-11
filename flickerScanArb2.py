@@ -1,12 +1,11 @@
 #import libraries
-from __future__ import division
 from psychopy import visual
 from psychopy import gui
 from psychopy import core
 from psychopy import data
 from psychopy import misc
 from psychopy import event
-from psychopy import filters
+from psychopy.visual import filters
 from psychopy import monitors
 import time, numpy, random
 #import retinotopyScans
@@ -55,9 +54,9 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
         colorAf=numpy.asarray(colorA,dtype=float)
         colorBf=numpy.asarray(colorB,dtype=float)
         colorBGf=numpy.asarray(colorBG,dtype=float)
-       
+
     elif type(foo) is unicode:
-        #this is from the params file   
+        #this is from the params file
         #or not. the menu is suddenly making this.
         foo2=ast.literal_eval(foo)
         colorAf=numpy.asarray(foo2,dtype=float)
@@ -75,14 +74,14 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
         colorAf=numpy.asarray(colorA,dtype=float)
         colorBf=numpy.asarray(colorB,dtype=float)
         colorBGf=numpy.asarray(colorBG,dtype=float)
-        
+
     colorAp=2*colorAf-1
     colorBp=2*colorBf-1
     colorBGp=2*colorBGf-1
     flickFreq=scanDict['animFreq']
     timeBase=0#scanDict['timeBase']
     #deal with optional color change in fixation
-    try:    
+    try:
         if scanDict['fixationStyle']==2:
             fixColorChange=1
         else:
@@ -92,14 +91,15 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
     fixPercentage =scanDict['fixFraction']
     fixDuration=0.25
     respDuration=1.0
-    subjectResponse=numpy.zeros((numpy.ceil(scanLength*60/100),1))
-    subRespArray=numpy.zeros((numpy.ceil(scanLength*60/100),3))
+    dummyLength=int(numpy.ceil(scanLength*60/100))
+    subjectResponse=numpy.zeros((dummyLength,1))
+    subRespArray=numpy.zeros((dummyLength,3))
     subjectResponse[:]=numpy.nan
 
     white=[1.0,1.0,1.0]
     gray=[0.0,0.0,0.0]
     black=[-1.0,-1.0,-1.0]
-    
+
     if scanDict['operatorScreen']==scanDict['subjectScreen']:
         screenCount=1
     else:
@@ -149,21 +149,21 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
     blank=visual.Rect(winSub,fillColor=colorBGp,fillColorSpace='rgb',lineColor=colorBGp,lineColorSpace='rgb',width=screenSize[0],height=screenSize[1],units='pix')
     #create a designmatrix for trigger-based counting
     #first create an array--length = total number of Trs
-    numTr=scanLength/scanDict['Tr']
-    designMatrix=numpy.zeros((numTr,1))    
+    numTr=int(scanLength/scanDict['Tr'])
+    designMatrix=numpy.zeros((numTr,1))
 
     #first N Trs are already zero--rest
     #figure out when the stim should be on
     for iStim in range(scanDict['numCycles']):
         restAmt=scanDict['preScanRest']/scanDict['Tr']
         stimDur=scanDict['period']/scanDict['Tr']
-        firstVal=restAmt + iStim*stimDur
-        lastVal=firstVal + scanDict['period']/(2*scanDict['Tr'])
+        firstVal=int(restAmt + iStim*stimDur)
+        lastVal=int(firstVal + scanDict['period']/(2*scanDict['Tr']))
         designMatrix[firstVal:lastVal]=1
     numpy.savetxt('debug.txt',designMatrix,fmt='%.3i')
 
 
-    debugVar=numpy.zeros((scanLength*60,2))
+    debugVar=numpy.zeros((int(scanLength*60),2))
     if screenSize[0]<257:
         imageSize=256
     elif screenSize[0]<513:
@@ -173,7 +173,7 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
     elif screenSize[0]<2057:
         imageSize=2048
     halfSize=numpy.int(imageSize/2)
-        
+
     #create arrays of x,y, and r,theta
     xIn=numpy.arange(-halfSize,halfSize,1)
     yIn=numpy.arange(-halfSize,halfSize,1)
@@ -188,7 +188,7 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
     theta[halfSize+1,halfSize+1]=0
     theta2=numpy.arctan2(x,y)
     theta2[halfSize+1,halfSize+1]=0
-    
+
     #number of wedges (pairs!!)--eventually to be a var passed in
     if 'numWedgePairs' in scanDict:
         #have the size
@@ -197,15 +197,15 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
         nWedges=8.0
     #number of ring pairs
     if 'ringWidth' in scanDict:
-        ringWidth=scanDict['ringWidth']        
-        
+        ringWidth=scanDict['ringWidth']
+
     else:
         ringWidth = 1
     #width of wedges in radians
     wedgeWidth = 2.0*math.pi/nWedges
     #ring function--describes how the ring width increases with eccentricity
     ringFunction=numpy.power(r/halfSize,0.3)+0.2#um, is there an int float problem here?
-    
+
     wedgeMask = 0.5 - (numpy.mod(theta,wedgeWidth)>(wedgeWidth/2.0)) #does this work
     mon=monitors.Monitor(scanDict['monCalFile'])
     screenSubtentHalf=(180.0/math.pi)*numpy.arctan2(0.5*mon.getWidth(),mon.getDistance())
@@ -213,7 +213,7 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
     rmA=numpy.mod(ringFunction,ringWidthNorm)>(ringWidthNorm/2.0)
     ringMask = 1 - 2.0*(rmA)
  #   plt.imshow(rmA); plt.colorbar()
-    
+
     checkerBoardLogic=wedgeMask*ringMask + 0.5
     #initialize an array of 1024x1024x3 for RGB channels
     checkerBoardA=numpy.ones((imageSize, imageSize,3))
@@ -245,7 +245,7 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
     checkerBoardA[:,:,0]=checkerBoardAR
     checkerBoardA[:,:,1]=checkerBoardAG
     checkerBoardA[:,:,2]=checkerBoardAB
-    
+
     checkerBoardB=numpy.ones((imageSize, imageSize,3))
     checkerBoardBR=numpy.ones((imageSize, imageSize))
     checkerBoardBB=numpy.ones((imageSize, imageSize))
@@ -272,29 +272,29 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
     stimA=visual.GratingStim(winSub,tex=checkerBoardA,size=imageSize,sf=1/imageSize,units='pix',texRes=imageSize)
     stimB=visual.GratingStim(winSub,tex=checkerBoardB,size=imageSize,sf=1/imageSize,units='pix')
 
-   
-    ReverseFreq =flickFreq #drift in Hz. could be an input param eventually? 
 
-    
+    ReverseFreq =flickFreq #drift in Hz. could be an input param eventually?
+
+
     #make a fixation cross which will rotate 45 deg on occasion
     if fixColorChange==1:
         fixColorOrig=[1,1,1]
-        fixColorNew=[1,-1,-1]    
+        fixColorNew=[1,-1,-1]
     else:
         fixColorOrig=[-1,-1,-1]
-        fixColorNew=[-1,-1,-1]    
+        fixColorNew=[-1,-1,-1]
     fix0 = visual.Circle(winSub,radius=IR,edges=32,lineColor=gray,lineColorSpace='rgb',
             fillColor=gray,fillColorSpace='rgb',autoLog=False)
     fix1 = visual.ShapeStim(winSub, pos=[0.0,0.0],vertices=((0.0,-0.4),(0.0,0.4)),lineWidth=3.0,
             lineColor=black,lineColorSpace='rgb',
             fillColor=black,fillColorSpace='rgb',autoLog=False)
-    
+
     fix2 = visual.ShapeStim(winSub, pos=[0.0,0.0],vertices=((-0.4,0.0),(0.4,0.0)),lineWidth=3.0,
             lineColor=black,lineColorSpace='rgb',
             fillColor=black,fillColorSpace='rgb',autoLog=False)
     msg1x=visual.TextStim(winSub, pos=[0,+8],text='flickering checkerboard, asymmetric timing')
-    msg1a = visual.TextStim(winSub, pos=[0,+5],text='During the scan, please keep your eyes on the + in the center.',height=1)    
-    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Hit any button any time the + becomes an X.',height=1)    
+    msg1a = visual.TextStim(winSub, pos=[0,+5],text='During the scan, please keep your eyes on the + in the center.',height=1)
+    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Hit any button any time the + becomes an X.',height=1)
     msg1=visual.TextStim(winSub,pos=[0,-3],text='Subject: Hit a button when ready.',color=[1,-1,-1],colorSpace='rgb')
     msg1.draw()
     msg1a.draw()
@@ -323,7 +323,7 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
     if thisKey in ['q','escape']:
         core.quit() #abort
     else:
-        event.clearEvents()        
+        event.clearEvents()
     responseKeys=list(scanDict['subjectResponse'])
 
     if screenCount==2:
@@ -334,14 +334,14 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
         msg.setPos([0,200])
         winOp.flip()
     msg1a = visual.TextStim(winSub, pos=[0,+5],text='   ',height=1)
-    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Waiting for magnet',height=1)    
+    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Waiting for magnet',height=1)
     msg1a.draw()
     msg1b.draw()
     fix0.draw()
     fix1.draw()
     fix2.draw()
     winSub.flip()
-  
+
     #wait for trigger
     trig=None
     triggerKeys=list(scanDict['trigger'])
@@ -354,8 +354,8 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
         core.quit()
     else: #stray key
         event.clearEvents()
-    
-    #start the timer            
+
+    #start the timer
     scanTimer=core.Clock()
     startTime=scanTimer.getTime()
 
@@ -386,9 +386,9 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
     # msg4.draw()
     # msg5 = visual.TextStim(operatorWindow,units='pix',text = 'time since correct',pos=(0.0,-15),height=2)
     # msg5.draw()
-    
 
-    fixTimer=core.Clock() 
+
+    fixTimer=core.Clock()
     respTimer=core.Clock()
     flickerTimer=core.Clock()
 
@@ -401,9 +401,9 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
         elif key in responseKeys and respTimeCheck<respDuration:
             subjectResponse[numCoins]=1
     #time based loop advancement
-   
+
     respCounter=0
-   
+
     #display rest for pre-scan duration
     while timeNow<scanDict['preScanRest']:
         timeNow = scanTimer.getTime()
@@ -412,7 +412,7 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
         if restLoopCounter%100 ==0 and restLoopCounter>10:
             #flip a coin to decide
             flipCoin=numpy.random.ranf()
-            if flipCoin<fixPercentage: 
+            if flipCoin<fixPercentage:
                 #reset timers/change ori
                 fixOri=45
                 #change colors if also asked for
@@ -473,15 +473,15 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
             winOp.flip()
         blank.draw()
 
-    
-    #pre-scan rest is done.        
+
+    #pre-scan rest is done.
     #prepare for looping through the cycles
     epochTimer = core.Clock()
 
     currentStim=blank
     #time based looping through stimulus
     while timeNow<startTime+scanLength: #loop until total scan duration has elapsed
-        timeBefore = timeNow    
+        timeBefore = timeNow
         timeNow = scanTimer.getTime()
         deltaT=timeNow - startTime
         deltaTinc=timeNow-timeBefore
@@ -510,7 +510,7 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
         if loopCounter%100 ==0 and loopCounter>10:
             #flip a coin to decide
             flipCoin=numpy.random.ranf()
-            if flipCoin<fixPercentage: 
+            if flipCoin<fixPercentage:
                 #reset timers/change ori
                 fixOri=45
                 #change colors if also asked for
@@ -538,7 +538,7 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
 
         fix1.setOri(fixOri)
         fix2.setOri(fixOri)
-        
+
         # display stimulus for stimDuration time, then rest for restDuration time
         epochTime=epochTimer.getTime()
         # epoch of stimulus
@@ -570,7 +570,7 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
             currentStim=blank
         else:
             epochTimer.reset()
-        
+
         winSub.flip()
 
         #count number of keypresses since previous frame, break if non-zero
@@ -581,7 +581,7 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
                 subjectResponse[numCoins]=1
                 subRespArray[respCounter,2]=1
 
-        loopCounter +=1        
+        loopCounter +=1
 #        print(loopCounter)
 
     findResp=subjectResponse[~numpy.isnan(subjectResponse)]
@@ -591,7 +591,7 @@ def flickerScanArb(scanDict, screenSize=[1024,768]):
         percentCorrect=100.0*float(numCorrect)/(float(numCoins))
     else:
         percentCorrect=100.0
-    
+
     msgText='You got %.0f %% correct!' %(percentCorrect,)
     msgPC=visual.TextStim(winSub,pos=[0,+3],text=msgText)
     msgPC.draw()

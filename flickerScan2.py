@@ -1,12 +1,11 @@
 #import libraries
-from __future__ import division
 from psychopy import visual
 from psychopy import gui
 from psychopy import core
 from psychopy import data
 from psychopy import misc
 from psychopy import event
-from psychopy import filters
+from psychopy.visual import filters
 from psychopy import monitors
 import time, numpy, random
 #import retinotopyScans
@@ -144,8 +143,9 @@ def flickerScan(scanDict, screenSize=[1024,768]):
     fixPercentage =scanDict['fixFraction']
     fixDuration=0.25
     respDuration=1.0
-    subjectResponse=numpy.zeros((numpy.ceil(scanLength*60.0/100.0),1))
-    subRespArray=numpy.zeros((numpy.ceil(scanLength*60.0/100.0),3))
+    dummyLength=int(numpy.ceil(scanLength*60.0/100.0))
+    subjectResponse=numpy.zeros((dummyLength,1))
+    subRespArray=numpy.zeros((dummyLength,3))
     subjectResponse[:]=numpy.nan
     white=[1.0,1.0,1.0]
     gray=[0.0,0.0,0.0]
@@ -153,7 +153,7 @@ def flickerScan(scanDict, screenSize=[1024,768]):
 
     #create a designmatrix for trigger-based counting
     #first create an array--length = total number of Trs
-    numTr=scanLength/scanDict['Tr']
+    numTr=int(scanLength/scanDict['Tr'])
     designMatrix=numpy.zeros((numTr,1))
 
     #first N Trs are already zero--rest
@@ -161,12 +161,13 @@ def flickerScan(scanDict, screenSize=[1024,768]):
     for iStim in range(scanDict['numCycles']):
         restAmt=scanDict['preScanRest']/scanDict['Tr']
         stimDur=scanDict['period']/scanDict['Tr']#CHECK THIS
-        firstVal=restAmt + iStim*stimDur
-        lastVal=firstVal + scanDict['period']/(2*scanDict['Tr'])
+        firstVal=int(restAmt + iStim*stimDur)
+        lastVal=int(firstVal + scanDict['period']/(2*scanDict['Tr']))
         designMatrix[firstVal:lastVal]=1
     numpy.savetxt('debug.txt',designMatrix,fmt='%.3i')
-
-    debugVar=numpy.zeros((scanLength*60,2))
+    
+    dummyLength2=int(scanLength*60)
+    debugVar=numpy.zeros((dummyLength2,2))
     if screenSize[0]<257:
         imageSize=256
     elif screenSize[0]<513:

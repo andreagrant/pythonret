@@ -1,17 +1,16 @@
 #import libraries
-from __future__ import division
-import pyglet
-pyglet.options['shadow_window'] = False
+#import pyglet
+#pyglet.options['shadow_window'] = False
 from psychopy import visual
 from psychopy import gui
 from psychopy import core
 from psychopy import data
 from psychopy import misc
 from psychopy import event
-from psychopy import filters
+from psychopy.visual import filters
 from psychopy import monitors
 import time, numpy, random
-pyglet.options['shadow_window'] = False
+#pyglet.options['shadow_window'] = False
 #import retinotopyScans
 import math
 from array import *
@@ -20,7 +19,6 @@ import glob
 import imp
 
 import datetime
-from tkFileDialog import askopenfilename
 import platform
 #import psychopy.info
 import unicodedata
@@ -122,7 +120,7 @@ if myDlg.OK:  # then the user pressed OK
     else:
         scanMode=2
 else:
-    print 'user cancelled'
+    print('user cancelled')
 
 #if param file based, get the param file
 if scanMode==1:
@@ -130,7 +128,9 @@ if scanMode==1:
     # root = Tk()
     # root.withdraw()
     print('before')
-    files=askopenfilename(initialdir=myPath,filetypes=[("pythonfiles","*.py")])
+    thisFileU=gui.fileOpenDlg()
+    files=str(thisFileU[0])
+
     print('after')
     if len(files)==0:
         #user cancelled--abort
@@ -233,7 +233,7 @@ elif scanMode==2:
         'numReps':5,
         #duration of post-stim rest for arbitrary timing drifting checkerboards
         'postScanRest':12,
-        
+
         }
     #get rid of numScans--it isn't used in dynamic mode
     if 'numScans' in scanDict:
@@ -286,7 +286,7 @@ elif scanMode==2:
                                  'trigger':'trigger character',
                                  'subjectResponse':'possible subject response characters',})
     if infoDlg.OK:
-        print scanDictAll
+        print(scanDictAll)
         #copy the values back into the main dict
         scanDict['Tr']=scanDictAll['Tr']
         scanDict['innerRadius']=scanDictAll['innerRadius']
@@ -297,20 +297,20 @@ elif scanMode==2:
         scanDict['trigger']=scanDictAll['trigger']
         scanDict['subjectResponse']=scanDictAll['subjectResponse']
 
-        
+
         #running--save the params
         misc.toFile('lastrun.pickle',scanDict)
     else:
-        print 'user cancelled'
+        print('user cancelled')
         core.quit()
     #root.deiconify()
 else:
-    print 'user cancelled'
-    core.quit()    
+    print('user cancelled')
+    core.quit()
 #either way, set up the monitor
 #monitor calibration information
 
-print "scanDict monitor"
+print('scanDict monitor')
 print(scanDict['monitor'])
 
 #
@@ -331,8 +331,8 @@ print(scanDict['monitor'])
 
 
 mon=monitors.Monitor(scanDict['monitor'])
-print "mon"
-print mon
+#print("mon")
+#print(mon)
 scanDict['monCalFile']=scanDict['monitor']
 # if '3TA' in scanDict['monitor']:
 #     scanDict['monCalFile'] = '3TA'
@@ -388,7 +388,7 @@ if thisMon not in localMon:
 
 #
 #if scanDict['operatorScreen']!= scanDict['subjectScreen']:
-#    if 'AS' in scanDict['monCalFile']:    
+#    if 'AS' in scanDict['monCalFile']:
 #        screenSize=[1600,1200]
 #        screenSize=[1024,768]
 #    else:
@@ -418,9 +418,9 @@ isolumParams=['monCalFile','Tr','innerRadius','fixFraction','monitor','operatorS
 
 
 if scanMode==1:
-    #for paramFile mode, the sequence of scans is set       
+    #for paramFile mode, the sequence of scans is set
     #backwards compatibility--rename flickFreq as animFreq
-    if 'flickFreq' in scanDict:   
+    if 'flickFreq' in scanDict:
         scanDict['animFreq']=scanDict['flickFreq']
         del scanDict['flickFreq']
     #loop through the scans and do each one
@@ -558,7 +558,7 @@ elif scanMode==2:
         win=visual.Window([800,860],monitor='testMonitor',units='pix',screen=0,color=[0,0,0],colorSpace='rgb')
 
         myRect=visual.Rect(win,units='pix',lineColor=[0.3, 0.3, 0.3], lineColorSpace='rgb')
-        myText=visual.TextStim(win,text='CW rotating wedge, 22.5 deg',pos=boxCenter,alignHoriz='center',alignVert='center')
+        myText=visual.TextStim(win,text='CW rotating wedge, 22.5 deg',pos=boxCenter,alignText='center',anchorVert='center')
         myMouse=event.Mouse(visible=True,win=win)
         for key in scanTypes:
             myRect.size=boxDims
@@ -609,9 +609,9 @@ elif scanMode==2:
         if nextScanType=='cw22.5':
             #CW wedge, 22.5 degrees
             scanDict['wedgeWidth']=22.5
-            #make a new dict with only the relevant params            
-            scanDictWedge=dict([(i,scanDict[i]) for i in wedgeParams if i in scanDict])            
-                       
+            #make a new dict with only the relevant params
+            scanDictWedge=dict([(i,scanDict[i]) for i in wedgeParams if i in scanDict])
+
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictWedge,title='Wedge parameters',
                                         order = ['preScanRest', 'period', 'numCycles', 'outerRadius', 'contrast','animFreq', 'pairWedge','Tr','innerRadius','fixFraction','monitor','operatorScreen','subjectScreen'],
@@ -623,19 +623,19 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictWedge.keys():
                     scanDict[iParam]=scanDictWedge[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrunwedgeScan.pickle',scanDictWedge)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = wedgeScan(scanDict = scanDictWedge, screenSize = screenSize, direction = 1.0)
 
         elif nextScanType=='ccw22.5':
             #CCW wedge, 22.5 degrees
             scanDict['wedgeWidth']=22.5
-            #make a new dict with only the relevant params            
-            scanDictWedge=dict([(i,scanDict[i]) for i in wedgeParams if i in scanDict])            
+            #make a new dict with only the relevant params
+            scanDictWedge=dict([(i,scanDict[i]) for i in wedgeParams if i in scanDict])
 
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictWedge,title='Wedge parameters',
@@ -648,19 +648,19 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictWedge.keys():
                     scanDict[iParam]=scanDictWedge[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrunwedgeScan.pickle',scanDictWedge)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = wedgeScan(scanDict = scanDictWedge, screenSize = screenSize, direction = -1.0)
 
         elif nextScanType=='cw45':
             #CW wedge, 45 degrees
             scanDict['wedgeWidth']=45
-            #make a new dict with only the relevant params            
-            scanDictWedge=dict([(i,scanDict[i]) for i in wedgeParams if i in scanDict])            
+            #make a new dict with only the relevant params
+            scanDictWedge=dict([(i,scanDict[i]) for i in wedgeParams if i in scanDict])
 
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictWedge,title='Wedge parameters',
@@ -673,11 +673,11 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictWedge.keys():
                     scanDict[iParam]=scanDictWedge[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrunwedgeScan.pickle',scanDictWedge)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = wedgeScan(scanDict = scanDictWedge, screenSize = screenSize, direction = 1.0)
 
@@ -685,8 +685,8 @@ elif scanMode==2:
         elif nextScanType=='ccw45':
             #CCW wedge, 45 degrees
             scanDict['wedgeWidth']=45
-            #make a new dict with only the relevant params            
-            scanDictWedge=dict([(i,scanDict[i]) for i in wedgeParams if i in scanDict])            
+            #make a new dict with only the relevant params
+            scanDictWedge=dict([(i,scanDict[i]) for i in wedgeParams if i in scanDict])
 
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictWedge,title='Wedge parameters',
@@ -699,11 +699,11 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictWedge.keys():
                     scanDict[iParam]=scanDictWedge[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrunwedgeScan.pickle',scanDictWedge)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = wedgeScan(scanDict = scanDictWedge, screenSize = screenSize, direction = -1.0)
 
@@ -711,8 +711,8 @@ elif scanMode==2:
         elif nextScanType=='exp12.5':
             #expanding ring, 12.5% duty cycle
             scanDict['dutyCycle']=12.5
-            #make a new dict with only the relevant params            
-            scanDictRing=dict([(i,scanDict[i]) for i in ringParams if i in scanDict])            
+            #make a new dict with only the relevant params
+            scanDictRing=dict([(i,scanDict[i]) for i in ringParams if i in scanDict])
 
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictRing,title='Ring parameters',
@@ -725,11 +725,11 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictRing.keys():
                     scanDict[iParam]=scanDictRing[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrunringScan.pickle',scanDictRing)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = ringScan(scanDict = scanDictRing, screenSize = screenSize, direction = -1.0)
 
@@ -737,8 +737,8 @@ elif scanMode==2:
         elif nextScanType=='con12.5':
             #contracting ring, 12.5% duty cycle
             scanDict['dutyCycle']=12.5
-            #make a new dict with only the relevant params            
-            scanDictRing=dict([(i,scanDict[i]) for i in ringParams if i in scanDict])            
+            #make a new dict with only the relevant params
+            scanDictRing=dict([(i,scanDict[i]) for i in ringParams if i in scanDict])
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictRing,title='Ring parameters',
                                         order = ['preScanRest', 'period', 'numCycles', 'outerRadius', 'contrast','animFreq','Tr','innerRadius','fixFraction','monitor','operatorScreen','subjectScreen'],
@@ -750,11 +750,11 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictRing.keys():
                     scanDict[iParam]=scanDictRing[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrunringScan.pickle',scanDictRing)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = ringScan(scanDict = scanDictRing, screenSize = screenSize, direction = 1.0)
 
@@ -763,8 +763,8 @@ elif scanMode==2:
         elif nextScanType=='exp25':
             #expanding ring, 25% duty cycle
             scanDict['dutyCycle']=25
-            #make a new dict with only the relevant params            
-            scanDictRing=dict([(i,scanDict[i]) for i in ringParams if i in scanDict])            
+            #make a new dict with only the relevant params
+            scanDictRing=dict([(i,scanDict[i]) for i in ringParams if i in scanDict])
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictRing,title='Ring parameters',
                                         order = ['preScanRest', 'period', 'numCycles', 'outerRadius','contrast', 'animFreq','Tr','innerRadius','fixFraction','monitor','operatorScreen','subjectScreen'],
@@ -776,11 +776,11 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictRing.keys():
                     scanDict[iParam]=scanDictRing[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrunringScan.pickle',scanDictRing)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = ringScan(scanDict = scanDictRing, screenSize = screenSize, direction = -1.0)
 
@@ -789,8 +789,8 @@ elif scanMode==2:
         elif nextScanType=='con25':
             #contracting ring, 25% duty cycle
             scanDict['dutyCycle']=25
-            #make a new dict with only the relevant params            
-            scanDictRing=dict([(i,scanDict[i]) for i in ringParams if i in scanDict])            
+            #make a new dict with only the relevant params
+            scanDictRing=dict([(i,scanDict[i]) for i in ringParams if i in scanDict])
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictRing,title='Ring parameters',
                                         order = ['preScanRest', 'period', 'numCycles', 'outerRadius','contrast', 'animFreq','Tr','innerRadius','fixFraction','monitor','operatorScreen','subjectScreen'],
@@ -802,20 +802,20 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictRing.keys():
                     scanDict[iParam]=scanDictRing[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrunringScan.pickle',scanDictRing)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = ringScan(scanDict = scanDictRing, screenSize = screenSize, direction = 1.0)
 
 
 
-        elif nextScanType=='driftOnOff': 
+        elif nextScanType=='driftOnOff':
             #full field DRIFTING checkerboard, B&W, on/off
-            #make a new dict with only the relevant params            
-            scanDictDrift=dict([(i,scanDict[i]) for i in driftParams if i in scanDict])            
+            #make a new dict with only the relevant params
+            scanDictDrift=dict([(i,scanDict[i]) for i in driftParams if i in scanDict])
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictDrift,title='Drifting Checkerboard parameters',
                                         order = ['period', 'numCycles', 'outerRadius', 'contrast','animFreq','Tr','innerRadius','fixFraction','monitor','operatorScreen','subjectScreen'],
@@ -827,19 +827,19 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictDrift.keys():
                     scanDict[iParam]=scanDictDrift[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrundriftScan.pickle',scanDictDrift)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = driftChecker(scanDict = scanDictDrift, screenSize=screenSize,offTimeBehavior=1)
 
 
         elif nextScanType=='driftDriftStatic':
             #full field checkerboard, B&W, drift-vs-static
-            #make a new dict with only the relevant params            
-            scanDictDrift=dict([(i,scanDict[i]) for i in driftParams if i in scanDict])            
+            #make a new dict with only the relevant params
+            scanDictDrift=dict([(i,scanDict[i]) for i in driftParams if i in scanDict])
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictDrift,title='Drifting Checkerboard parameters',
                                         order = ['period', 'numCycles', 'outerRadius', 'contrast','animFreq','Tr','innerRadius','fixFraction','monitor','operatorScreen','subjectScreen'],
@@ -851,19 +851,19 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictDrift.keys():
                     scanDict[iParam]=scanDictDrift[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrundriftScan.pickle',scanDictDrift)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = driftChecker(scanDict = scanDictDrift, screenSize=screenSize,offTimeBehavior=2)
 
 
         elif nextScanType=='driftCenterSurr':
             #center surround checkerboard.......
-            #make a new dict with only the relevant params            
-            scanDictDrift=dict([(i,scanDict[i]) for i in driftParams if i in scanDict])            
+            #make a new dict with only the relevant params
+            scanDictDrift=dict([(i,scanDict[i]) for i in driftParams if i in scanDict])
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictDrift,title='Drifting Checkerboard parameters',
                                         order = ['period', 'numCycles', 'outerRadius', 'contrast','animFreq','Tr','innerRadius','fixFraction','monitor','operatorScreen','subjectScreen'],
@@ -875,19 +875,19 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictDrift.keys():
                     scanDict[iParam]=scanDictDrift[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrundriftScan.pickle',scanDictDrift)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = driftChecker(scanDict = scanDictDrift, screenSize=screenSize,offTimeBehavior=3,maskType=1)
 
 
         elif nextScanType=='driftAltHalves':
             #alternating halves checkerboard....
-            #make a new dict with only the relevant params            
-            scanDictDrift=dict([(i,scanDict[i]) for i in driftParams if i in scanDict])            
+            #make a new dict with only the relevant params
+            scanDictDrift=dict([(i,scanDict[i]) for i in driftParams if i in scanDict])
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictDrift,title='Drifting Checkerboard parameters',
                                         order = ['period', 'numCycles', 'outerRadius','contrast', 'animFreq','Tr','innerRadius','fixFraction','monitor','operatorScreen','subjectScreen'],
@@ -899,11 +899,11 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictDrift.keys():
                     scanDict[iParam]=scanDictDrift[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrundriftScan.pickle',scanDictDrift)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = driftChecker(scanDict = scanDictDrift, screenSize=screenSize,offTimeBehavior=3,maskType=2)
 
@@ -912,9 +912,9 @@ elif scanMode==2:
             #center/innersurround/outersurround checkerboard.......
             scanDict['Ralpha']=1.0
             scanDict['Rbeta']=2.0
-            
-            #make a new dict with only the relevant params            
-            scanDictDrift3=dict([(i,scanDict[i]) for i in drift3Params if i in scanDict])            
+
+            #make a new dict with only the relevant params
+            scanDictDrift3=dict([(i,scanDict[i]) for i in drift3Params if i in scanDict])
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictDrift3,title='Drifting Checkerboard parameters',
                                         order = ['preScanRest', 'period', 'numCycles','contrast', 'Ralpha','Rbeta','outerRadius', 'animFreq','Tr','innerRadius','fixFraction','monitor','operatorScreen','subjectScreen'],
@@ -926,20 +926,20 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictDrift3.keys():
                     scanDict[iParam]=scanDictDrift3[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrundrift3Scan.pickle',scanDictDrift3)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = driftChecker3mask(scanDict = scanDictDrift3, screenSize=screenSize,offTimeBehavior=3,maskType=1)
 
 
-        elif nextScanType=='driftOnOffArb': 
+        elif nextScanType=='driftOnOffArb':
             #full field DRIFTING checkerboard, B&W, on/off
-            #make a new dict with only the relevant params            
-            scanDictDriftArb=dict([(i,scanDict[i]) for i in driftArbParams if i in scanDict])       
-      
+            #make a new dict with only the relevant params
+            scanDictDriftArb=dict([(i,scanDict[i]) for i in driftArbParams if i in scanDict])
+
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictDriftArb,title='Drifting Checkerboard Arb parameters',
                                         order = ['preScanRest','numBlocks','numReps','stimDurationA','stimDurationB','stimDurationRest','postScanRest', 'outerRadius', 'contrast','animFreq','Tr','innerRadius','fixFraction','monitor','operatorScreen','subjectScreen'],
@@ -952,20 +952,20 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictDriftArb.keys():
                     scanDict[iParam]=scanDictDriftArb[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrundriftScanArb.pickle',scanDictDriftArb)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = driftCheckerArb(scanDict = scanDictDriftArb, screenSize=screenSize,offTimeBehavior=1)
 
 
         elif nextScanType=='driftDriftStaticArb':
             #full field checkerboard, B&W, drift-vs-static
-            #make a new dict with only the relevant params            
-            scanDictDriftArb=dict([(i,scanDict[i]) for i in driftArbParams if i in scanDict])            
-         
+            #make a new dict with only the relevant params
+            scanDictDriftArb=dict([(i,scanDict[i]) for i in driftArbParams if i in scanDict])
+
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictDriftArb,title='Drifting Checkerboard Arb parameters',
                                         order = ['preScanRest','numBlocks','numReps','stimDurationA','stimDurationB','stimDurationRest','postScanRest', 'outerRadius', 'contrast','animFreq','Tr','innerRadius','fixFraction','monitor','operatorScreen','subjectScreen'],
@@ -978,20 +978,20 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictDriftArb.keys():
                     scanDict[iParam]=scanDictDriftArb[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrundriftScan.pickle',scanDictDriftArb)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = driftCheckerArb(scanDict = scanDictDriftArb, screenSize=screenSize,offTimeBehavior=2)
 
 
         elif nextScanType=='driftCenterSurrArb':
             #center surround checkerboard.......
-            #make a new dict with only the relevant params            
-            scanDictDriftArb=dict([(i,scanDict[i]) for i in driftArbParams if i in scanDict])            
-                   
+            #make a new dict with only the relevant params
+            scanDictDriftArb=dict([(i,scanDict[i]) for i in driftArbParams if i in scanDict])
+
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictDriftArb,title='Drifting Checkerboard Arb parameters',
                                         order = ['preScanRest','numBlocks','numReps','stimDurationA','stimDurationB','stimDurationRest','postScanRest', 'outerRadius', 'contrast','animFreq','Tr','innerRadius','fixFraction','monitor','operatorScreen','subjectScreen'],
@@ -1004,20 +1004,20 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictDriftArb.keys():
                     scanDict[iParam]=scanDictDriftArb[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrundriftScan.pickle',scanDictDriftArb)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = driftCheckerArb(scanDict = scanDictDriftArb, screenSize=screenSize,offTimeBehavior=3,maskType=1)
 
 
         elif nextScanType=='driftAltHalvesArb':
             #alternating halves checkerboard....
-            #make a new dict with only the relevant params            
-            scanDictDriftArb=dict([(i,scanDict[i]) for i in driftArbParams if i in scanDict])   
-                       
+            #make a new dict with only the relevant params
+            scanDictDriftArb=dict([(i,scanDict[i]) for i in driftArbParams if i in scanDict])
+
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictDriftArb,title='Drifting Checkerboard Arb parameters',
                                         order = ['preScanRest','numBlocks','numReps','stimDurationA','stimDurationB','stimDurationRest','postScanRest', 'outerRadius', 'contrast','animFreq','Tr','innerRadius','fixFraction','monitor','operatorScreen','subjectScreen'],
@@ -1029,11 +1029,11 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictDriftArb.keys():
                     scanDict[iParam]=scanDictDriftArb[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrundriftScan.pickle',scanDictDriftArb)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             print(screenSize)
             runInfo = driftCheckerArb(scanDict = scanDictDriftArb, screenSize=screenSize,offTimeBehavior=3,maskType=2)
@@ -1041,12 +1041,12 @@ elif scanMode==2:
 
         elif nextScanType=='VWFAemot':
             #VWFA localizer. letters vs wingdings vs emoticons....
-            #make a new dict with only the relevant params            
-            scanDictVWFA=dict([(i,scanDict[i]) for i in vwfaParams if i in scanDict])            
+            #make a new dict with only the relevant params
+            scanDictVWFA=dict([(i,scanDict[i]) for i in vwfaParams if i in scanDict])
             #copy values back to main dict
             for iParam in scanDictVWFA.keys():
                 scanDict[iParam]=scanDictVWFA[iParam]
-            
+
             misc.toFile('lastrun.pickle',scanDict)
             misc.toFile('lastrunvwfaScan.pickle',scanDictVWFA)
             runInfo = VWFAloc(scanDict = scanDictVWFA, screenSize=screenSize)
@@ -1054,10 +1054,10 @@ elif scanMode==2:
 
         elif nextScanType=='VWFA':
             #VWFA localizer. chairs vs houses vs faces vs letters...
-            scanDictVWFA=dict([(i,scanDict[i]) for i in vwfaParams if i in scanDict])            
+            scanDictVWFA=dict([(i,scanDict[i]) for i in vwfaParams if i in scanDict])
             for iParam in scanDictVWFA.keys():
                 scanDict[iParam]=scanDictVWFA[iParam]
-            
+
             misc.toFile('lastrun.pickle',scanDict)
             misc.toFile('lastrunvwfaScan.pickle',scanDictVWFA)
             runInfo = VWFAlocImages(scanDict = scanDictVWFA, screenSize=screenSize)
@@ -1065,10 +1065,10 @@ elif scanMode==2:
 
         elif nextScanType=='isolumTest':
             #test red-green for isoluminance
-            scanDictIsolum=dict([(i,scanDict[i]) for i in isolumParams if i in scanDict])            
+            scanDictIsolum=dict([(i,scanDict[i]) for i in isolumParams if i in scanDict])
             for iParam in scanDictIsolum.keys():
                 scanDict[iParam]=scanDictIsolum[iParam]
-            
+
             misc.toFile('lastrun.pickle',scanDict)
             misc.toFile('lastrunisolumScan.pickle',scanDictIsolum)
             runInfo = isolumTest(scanDict = scanDictIsolum, screenSize=screenSize)
@@ -1076,7 +1076,7 @@ elif scanMode==2:
 
         elif nextScanType=='isolum':
             #isoluminant red-green checkerboards
-            scanDictIsolum=dict([(i,scanDict[i]) for i in isolumParams if i in scanDict])            
+            scanDictIsolum=dict([(i,scanDict[i]) for i in isolumParams if i in scanDict])
             #need to load isoluminant values from the pickle from the test scan
             #for now, hard code them
             scanDict['red']=255
@@ -1085,10 +1085,10 @@ elif scanMode==2:
             scanDict['colorB']=[0,0.5,0]
             scanDict['colorBackground']=[0.5,0.5,0.5],
             scanDict['timeBase']=1
-            
+
             for iParam in scanDictIsolum.keys():
                 scanDict[iParam]=scanDictIsolum[iParam]
-            
+
             misc.toFile('lastrun.pickle',scanDict)
             misc.toFile('lastrunisolumScan.pickle',scanDictIsolum)
             runInfo = isolumCheckerScan(scanDict = scanDictIsolum, screenSize=screenSize)
@@ -1096,7 +1096,7 @@ elif scanMode==2:
 
         elif nextScanType=='flickOnOff':
             #flickering checkerboard....
-            scanDictFlick=dict([(i,scanDict[i]) for i in flickParams if i in scanDict])            
+            scanDictFlick=dict([(i,scanDict[i]) for i in flickParams if i in scanDict])
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictFlick,title='Flickering checkerboard parameters',
             order = ['preScanRest', 'period', 'numCycles', 'outerRadius', 'fixationStyle','animFreq','colorA','colorB','colorBackground','numWedgePairs','ringWidth','timeBase','Tr','innerRadius','fixFraction','monitor','operatorScreen','subjectScreen'],
@@ -1107,18 +1107,18 @@ elif scanMode==2:
 #                print scanDictFlick
                 for iParam in scanDictFlick.keys():
                     scanDict[iParam]=scanDictFlick[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrunflickScan.pickle',scanDictFlick)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = flickerScan(scanDict = scanDictFlick, screenSize=screenSize)
 
 
         elif nextScanType=='flickAsym':
             #flickering checkerboard with asymmetric timing....
-            scanDictFlickarb=dict([(i,scanDict[i]) for i in flickarbParams if i in scanDict])            
+            scanDictFlickarb=dict([(i,scanDict[i]) for i in flickarbParams if i in scanDict])
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictFlickarb,title='Flickering checkerboard parameters',
             order = ['preScanRest', 'stimDuration','period', 'numCycles', 'outerRadius', 'fixationStyle','animFreq','colorA','colorB','colorBackground','numWedgePairs','ringWidth','Tr','innerRadius','fixFraction','monitor','operatorScreen','subjectScreen'],
@@ -1129,19 +1129,19 @@ elif scanMode==2:
 #                print scanDictFlickarb
                 for iParam in scanDictFlickarb.keys():
                     scanDict[iParam]=scanDictFlickarb[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrunflickarbScan.pickle',scanDictFlickarb)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = flickerScanArb(scanDict = scanDictFlickarb, screenSize=screenSize)
 
 
         elif nextScanType=='mtA':
             #MT direction A (drift-static)
-            #make a new dict with only the relevant params            
-            scanDictMotion=dict([(i,scanDict[i]) for i in motionParams if i in scanDict])            
+            #make a new dict with only the relevant params
+            scanDictMotion=dict([(i,scanDict[i]) for i in motionParams if i in scanDict])
 
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictMotion,title='Motion (A) parameters',
@@ -1154,18 +1154,18 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictMotion.keys():
                     scanDict[iParam]=scanDictMotion[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrunmotionScan.pickle',scanDictMotion)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = motionScan(scanDict = scanDict, screenSize = screenSize, direction = 1.0)
 
         elif nextScanType=='mtB':
             #MT direction B (static-drift)
-            #make a new dict with only the relevant params            
-            scanDictMotion=dict([(i,scanDict[i]) for i in motionParams if i in scanDict])            
+            #make a new dict with only the relevant params
+            scanDictMotion=dict([(i,scanDict[i]) for i in motionParams if i in scanDict])
 
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictMotion,title='Motion (B) parameters',
@@ -1178,18 +1178,18 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictMotion.keys():
                     scanDict[iParam]=scanDictMotion[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrunmotionScan.pickle',scanDictMotion)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = motionScan(scanDict = scanDict, screenSize = screenSize, direction = -1.0)
 
         elif nextScanType=='LOCA':
             #LOC direction A (intact-scrambled)
-            #make a new dict with only the relevant params            
-            scanDictObject=dict([(i,scanDict[i]) for i in objectParams if i in scanDict])            
+            #make a new dict with only the relevant params
+            scanDictObject=dict([(i,scanDict[i]) for i in objectParams if i in scanDict])
 
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictObject,title='Motion parameters',
@@ -1202,18 +1202,18 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictObject.keys():
                     scanDict[iParam]=scanDictObject[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrunobjectScan.pickle',scanDictObject)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = objectScan(scanDict = scanDict, screenSize = screenSize, direction = 1.0)
 
         elif nextScanType=='LOCB':
             #LOC direction B (scrambled-intact)
-            #make a new dict with only the relevant params            
-            scanDictObject=dict([(i,scanDict[i]) for i in objectParams if i in scanDict])            
+            #make a new dict with only the relevant params
+            scanDictObject=dict([(i,scanDict[i]) for i in objectParams if i in scanDict])
 
             #pop a GUI to confirm/update values
             infoDlg = gui.DlgFromDict(dictionary=scanDictObject,title='Motion parameters',
@@ -1226,11 +1226,11 @@ elif scanMode==2:
                 #copy values back to main dict
                 for iParam in scanDictObject.keys():
                     scanDict[iParam]=scanDictObject[iParam]
-                
+
                 misc.toFile('lastrun.pickle',scanDict)
                 misc.toFile('lastrunobjectScan.pickle',scanDictObject)
             else:
-                print 'user cancelled'
+                print('user cancelled')
                 core.quit()
             runInfo = objectScan(scanDict = scanDict, screenSize = screenSize, direction = -1.0)
 
@@ -1247,4 +1247,3 @@ elif scanMode==2:
             core.quit()
 
 core.quit()
-

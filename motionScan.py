@@ -1,12 +1,11 @@
  #import libraries
-from __future__ import division
 from psychopy import visual
 from psychopy import gui
 from psychopy import core
 from psychopy import data
 from psychopy import misc
 from psychopy import event
-from psychopy import filters
+from psychopy.visual import filters
 from psychopy import monitors
 import time, numpy, random
 #import retinotopyScans
@@ -14,13 +13,13 @@ import math
 from array import *
 import os
 import glob
-import imp          
+import imp
 import datetime
 #############################################################################
 ################### MT localizer ###################################
 #############################################################################
-            
-            
+
+
 def motionScan(scanDict, screenSize=[1024,768], dotSpeed=5.8, dotMotion='radial',direction = 1.0):
     scanLength = float(scanDict['numCycles']*scanDict['period']+scanDict['preScanRest'])
     #get actual size of window--useful in the functions
@@ -53,9 +52,9 @@ def motionScan(scanDict, screenSize=[1024,768], dotSpeed=5.8, dotMotion='radial'
         event.clearEvents()
     #close the winOp
     winOp.close()
- 
+
     #open subject window
-    winSub = visual.Window(screenSize,monitor=scanDict['monCalFile'],units='deg',screen=scanDict['subjectScreen'], 
+    winSub = visual.Window(screenSize,monitor=scanDict['monCalFile'],units='deg',screen=scanDict['subjectScreen'],
                        color=[0.0,0.0,0.0],colorSpace='rgb',fullscr=False,allowGUI=False)
     subWinSize=winSub.size
         #parse out vars from scanDict
@@ -65,7 +64,8 @@ def motionScan(scanDict, screenSize=[1024,768], dotSpeed=5.8, dotMotion='radial'
     fixPercentage=scanDict['fixFraction']
     fixDuration=0.2
     respDuration=1.0
-    subjectResponse=numpy.zeros((numpy.ceil(scanLength*60/100),1))
+    dummyLength=int(numpy.ceil(scanLength*60/100))
+    subjectResponse=numpy.zeros((dummyLength,1))
     subjectResponse[:]=numpy.nan
     white=[1.0,1.0,1.0]
     gray=[0.0,0.0,0.0]
@@ -85,12 +85,12 @@ def motionScan(scanDict, screenSize=[1024,768], dotSpeed=5.8, dotMotion='radial'
     numpy.savetxt('rads.txt',dotsRadius,fmt='%.1f')
     numpy.savetxt('pols.txt',dotsPolarAngle,fmt='%.1f')
     dotsDirection = numpy.random.rand(numDots)*2.0*math.pi
-    
+
     #make an aperture mask
 #    ap = visual.Aperture(winSub,size=(OR-1)*2.0 ,units='deg')
     #ap = visual.Aperture(winSub,size=(OR-1) ,units='deg')
     #ap.disable()
-    #create the dots  
+    #create the dots
     #color is based on contrast--not sure this is quite how I want it?
     # if contrast is 0, dot color is 0 which = background
     # if contrast is 1, dot color is 1, which is white, which is the "full" contrast...
@@ -104,8 +104,8 @@ def motionScan(scanDict, screenSize=[1024,768], dotSpeed=5.8, dotMotion='radial'
     numpy.savetxt('doty.txt',dotsY,fmt='%.1f')
     #dotsX *= 0.75 #aspect ratio issue
     movingDots.setXYs(numpy.array([dotsX, dotsY]).transpose())
-    
-    
+
+
     #fixation
     fix0=visual.Circle(winSub,radius=IR,edges=32,lineColor=gray,lineColorSpace='rgb',
                        fillColor=gray,fillColorSpace='rgb',autoLog=False)
@@ -114,13 +114,13 @@ def motionScan(scanDict, screenSize=[1024,768], dotSpeed=5.8, dotMotion='radial'
                             fillColor=black,fillColorSpace='rgb',autoLog=False)
     fix2 = visual.ShapeStim(winSub,pos=[0.0,0.0],vertices=((-0.15,0),(0.15,0.0)),lineWidth=3.0,
                             lineColor=black,lineColorSpace='rgb',autoLog=False)
-    
-    #wait for subject    
+
+    #wait for subject
     if direction==1:
         scanNameText='motion localizer. On condition is %s dots' % ('moving')
     else:
         scanNameText='motion localizer. On condition is %s dots' % ('static')
-        
+
     msg1=visual.TextStim(winSub,pos=[0,+2],text='%s \n\nSubject: press a button when ready.'%scanNameText)
     msg1.draw()
     winSub.flip()
@@ -158,18 +158,18 @@ def motionScan(scanDict, screenSize=[1024,768], dotSpeed=5.8, dotMotion='radial'
     #ap.enable()
     #draw the stimulus
     #winSub.setColor(black)
-    movingDots.draw()    
+    movingDots.draw()
     fix0.draw()
     fix1.draw()
     fix2.draw()
     winSub.flip()
-    
+
     #draw the time
     timeNow=scanTimer.getTime()
     #timeMsg=visual.TextStim(winSub,pos=[-screenSize[0]/2+100,-screenSize[1]/2+15],units='pix',text= 't = %.3f' %timeNow)
 #    timeMsg = visual.TextStim(winOp,pos=[0,-1],text = 't = %.3f' %timeNow)
 #    timeMsg.draw()
-    
+
     #print(timeNow)
     loopCounter=0
     fixTimer=core.Clock()
@@ -184,7 +184,7 @@ def motionScan(scanDict, screenSize=[1024,768], dotSpeed=5.8, dotMotion='radial'
 
     #pre-scan stimulus
 
-    
+
     #let's make a kind of phase variable that I can adjust for pre-scan rest
     phaseInit=0
     #need a kind of phase variable to dial back (rather, advance it up through part of a period)
@@ -198,12 +198,12 @@ def motionScan(scanDict, screenSize=[1024,768], dotSpeed=5.8, dotMotion='radial'
         runningT=timeNow-startTime
         phase=phaseInit+timeNow
         mode=phase%scanDict['period']
-        
-        #every 100 frames, decide if fixation should change or not    
+
+        #every 100 frames, decide if fixation should change or not
         if loopCounter%100 ==0 and loopCounter>10:
            #flip a coin to decide
             flipCoin=numpy.random.ranf()
-            if flipCoin<fixPercentage: 
+            if flipCoin<fixPercentage:
                 #reset timers/change ori
                 fixOri=45
                 fixTimer.reset()
@@ -216,16 +216,16 @@ def motionScan(scanDict, screenSize=[1024,768], dotSpeed=5.8, dotMotion='radial'
             fixOri=0
         epochTime=epochTimer.getTime()
         miniEpochTime=miniEpochTimer.getTime()
-        
-        #every 2 seconds, change the direction of some dots   
-        if loopCounter%60==0 and loopCounter>10:         
-            #change direction of 30% of the dots    
+
+        #every 2 seconds, change the direction of some dots
+        if loopCounter%60==0 and loopCounter>10:
+            #change direction of 30% of the dots
             flipCoinDots=numpy.random.rand(numDots)
             flippedDots = flipCoinDots>0.3
             numFlipped=numpy.sum(flippedDots)
             dotsDirection[flippedDots] = numpy.random.rand(numFlipped)*2.0*math.pi
             flipTimer.reset()
-                
+
         #12s epoch
 #        if epochTime<scanDict['preScanRest']+scanDict['period']/2.0:
         if mode<scanDict['period']/2.0:
@@ -246,7 +246,7 @@ def motionScan(scanDict, screenSize=[1024,768], dotSpeed=5.8, dotMotion='radial'
                     newX,newY = misc.pol2cart(dotsT,dotsR)
                     dotsX[lostDots] = newX
                     dotsY[lostDots]=newY
-                
+
                 movingDots.setXYs(numpy.array([dotsX, dotsY]).transpose())
             else:
                 #static dots for ON CONDITION
@@ -283,15 +283,15 @@ def motionScan(scanDict, screenSize=[1024,768], dotSpeed=5.8, dotMotion='radial'
                     newX,newY = misc.pol2cart(dotsT,dotsR)
                     dotsX[lostDots] = newX
                     dotsY[lostDots]=newY
-                
+
                 movingDots.setXYs(numpy.array([dotsX, dotsY]).transpose())
-                
+
         else:
             epochTimer.reset()
-            
+
 
         fix1.setOri(fixOri)
-        fix2.setOri(fixOri)   
+        fix2.setOri(fixOri)
         #ap.enable()
         movingDots.draw()
         #ap.disable()
@@ -311,9 +311,9 @@ def motionScan(scanDict, screenSize=[1024,768], dotSpeed=5.8, dotMotion='radial'
                 core.quit()
             elif key in responseKeys and respTimeCheck<respDuration:
                 subjectResponse[numCoins]=1
-        
+
         loopCounter+=1
-         
+
     #check responses
     findResp=subjectResponse[~numpy.isnan(subjectResponse)]
     calcResp=findResp[findResp==1]
@@ -322,7 +322,7 @@ def motionScan(scanDict, screenSize=[1024,768], dotSpeed=5.8, dotMotion='radial'
         percentCorrect=100.0*float(numCorrect)/(float(numCoins))
     else:
         percentCorrect=100.0
-    
+
     msgText='You got %.0f %% correct!' %(percentCorrect,)
     msgPC=visual.TextStim(winSub,pos=[0,+3],text=msgText)
     msgPC.draw()
@@ -341,4 +341,3 @@ def motionScan(scanDict, screenSize=[1024,768], dotSpeed=5.8, dotMotion='radial'
     core.wait(2)
 #    winOp.close()
     winSub.close()
-   

@@ -4,14 +4,13 @@ Created on Thu Sep 20 14:34:12 2012
 
 @author: agrant
 """
-from __future__ import division
 from psychopy import gui
 from psychopy import core
 from psychopy import visual
 from psychopy import data
 from psychopy import misc
 from psychopy import event
-from psychopy import filters
+from psychopy.visual import filters
 import time, numpy, random
 #import retinotopyScans
 import matplotlib.pyplot as plot
@@ -37,12 +36,12 @@ if myDlg.OK:#then the user pressed OK
     scanInfo = myDlg.data
     #print scanInfo
     #misc.toFile('retparams.pickle',scanInfo)
-else: 
-    print 'user cancelled'
+else:
+    print('user cancelled')
     core.quit()
 #
 monCal='ASrearProj'
-winSub = visual.Window([1024,768],monitor=monCal,units="deg",screen=1, 
+winSub = visual.Window([1024,768],monitor=monCal,units="deg",screen=1,
                                color=[-1.0,-1.0,-1.0],colorSpace='rgb',fullscr=True,allowGUI=False)
 IR = 0.5
 OR=12.0
@@ -146,7 +145,7 @@ stimA=visual.GratingStim(winSub,tex=checkerBoardA,size=imageSize,sf=1/imageSize,
 stimB=visual.GratingStim(winSub,tex=checkerBoardB,size=imageSize,sf=1/imageSize,units='pix')
 
 
-ReverseFreq =8.0 #drift in Hz. could be an input param eventually? 
+ReverseFreq =8.0 #drift in Hz. could be an input param eventually?
 
 
 #make a fixation cross which will rotate 45 deg on occasion
@@ -175,14 +174,14 @@ while thisKey==None:
 if thisKey in ['q','escape']:
     core.quit() #abort
 else:
-    event.clearEvents()        
-#    while len(event.getKeys())==0: 
+    event.clearEvents()
+#    while len(event.getKeys())==0:
 #        core.wait(0.05)
 #    event.clearEvents()
 msg1=visual.TextStim(winSub,pos=[0,+3],text='Noise coming....')
 msg1.draw()
 winSub.flip()
-  
+
 #wait for trigger
 trig=None
 while trig==None:
@@ -193,7 +192,7 @@ if trig in ['q','escape']:
 else: #stray key
     event.clearEvents()
 
-#start the timer            
+#start the timer
 scanTimer=core.Clock()
 startTime=scanTimer.getTime()
 
@@ -209,7 +208,7 @@ timeNow = scanTimer.getTime()
 msg = visual.TextStim(winSub, pos=[-screenSize[0]/2+45,-screenSize[1]/2+15],units='pix',text = 't = %.3f' %timeNow)
 msg.draw()
 loopCounter=0
-fixTimer=core.Clock() 
+fixTimer=core.Clock()
 respTimer=core.Clock()
 flickerTimer=core.Clock()
 
@@ -224,7 +223,7 @@ while timeNow<scanInfo[3]:
     if loopCounter%100 ==0 and loopCounter>10:
         #flip a coin to decide
         flipCoin=numpy.random.ranf()
-        if flipCoin<fixPercentage: 
+        if flipCoin<fixPercentage:
             #reset timers/change ori
             fixOri=45
             fixTimer.reset()
@@ -249,16 +248,16 @@ while timeNow<scanInfo[3]:
 epochTimer = core.Clock()
 
 while timeNow<startTime+scanLength: #loop for scan duration
-    timeBefore = timeNow    
+    timeBefore = timeNow
     timeNow = scanTimer.getTime()
     deltaT=timeNow - startTime
     deltaTinc=timeNow-timeBefore
-    
+
     #every 100 frames, decide if the fixation point should change or not
     if loopCounter%100 ==0 and loopCounter>10:
         #flip a coin to decide
         flipCoin=numpy.random.ranf()
-        if flipCoin<fixPercentage: 
+        if flipCoin<fixPercentage:
             #reset timers/change ori
             fixOri=45
             fixTimer.reset()
@@ -272,7 +271,7 @@ while timeNow<startTime+scanLength: #loop for scan duration
 
     fix1.setOri(fixOri)
     fix2.setOri(fixOri)
-    
+
     # alternate between stimulus and rest, starting with pre-scan duration of rest
     epochTime=epochTimer.getTime()
     #12s epoch of stimulus
@@ -304,7 +303,7 @@ while timeNow<startTime+scanLength: #loop for scan duration
         fix2.draw()
     else:
         epochTimer.reset()
-    
+
     msg.setText('t = %.3f' %timeNow)
     msg.draw()
     winSub.flip()
@@ -317,7 +316,7 @@ while timeNow<startTime+scanLength: #loop for scan duration
             core.quit()
         elif key in ['r','g','b','y'] and respTimeCheck<respDuration:
             subjectResponse[numCoins]=1
-    
+
     loopCounter +=1
     #core.wait(5.0)
     #outFile = open("debug.txt","w")
@@ -327,7 +326,7 @@ while timeNow<startTime+scanLength: #loop for scan duration
     #numpy.savetxt('debugchop.txt',debugVar[:row,],fmt='%.3f')
 
 #calculate %age of responses that were correct
-#find non-nan  
+#find non-nan
 #np.isnan(a) gives boolean array of true/a=false
 #np.isnan(a).any(1) gives a col vector of the rows with nans
 #~np.isnan(a).any(1) inverts the logic

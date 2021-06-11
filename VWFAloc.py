@@ -1,12 +1,11 @@
 #import libraries
-from __future__ import division
 from psychopy import visual
 from psychopy import gui
 from psychopy import core
 from psychopy import data
 from psychopy import misc
 from psychopy import event
-from psychopy import filters
+from psychopy.visual import filters
 from psychopy import monitors
 import time, numpy, random
 #import retinotopyScans
@@ -26,7 +25,7 @@ import datetime
 def VWFAloc(scanDict,screenSize=[1024,768]):
 
     #open subject window
-    winSub = visual.Window(screenSize,monitor=scanDict['monCalFile'],units="deg",screen=scanDict['subjectScreen'], 
+    winSub = visual.Window(screenSize,monitor=scanDict['monCalFile'],units="deg",screen=scanDict['subjectScreen'],
                        color=[-1.0,-1.0,-1.0],colorSpace='rgb',fullscr=True,allowGUI=False)
     winOp = visual.Window([500,200],monitor='testMonitor',units='deg',screen=scanDict['operatorScreen'],
                           color=[0.0,0.0,0.0],colorSpace='rgb')
@@ -39,9 +38,9 @@ def VWFAloc(scanDict,screenSize=[1024,768]):
     IR=scanDict['innerRadius']
     screenSize=scanDict['screenSize']
 
-    #create a designmatrix 
+    #create a designmatrix
     numTrials=228
-    designMatrix=numpy.zeros((numTrials,3))  
+    designMatrix=numpy.zeros((numTrials,3))
     numEach=36#36 of each type
 
     #first N Trs are already zero--rest
@@ -57,7 +56,7 @@ def VWFAloc(scanDict,screenSize=[1024,768]):
     #A: 13-24, 109-120, 205-216
     #B: 37-48,85-96,157-168
     #C: 61-72, 133-144, 181-192
-    #all others are rest 
+    #all others are rest
     designMatrix[12:23,0]=1
     designMatrix[108:119,0]=1
     designMatrix[204:215,0]=1
@@ -110,7 +109,7 @@ def VWFAloc(scanDict,screenSize=[1024,768]):
                "1F624","1F625","1F626","1F627","1F628","1F629","1F62A","1F62B","1F62C",
                "1F62D","1F62E","1F62F","1F630","1F631","1F632","1F633","1F634","1F635",
                "1F636","1F637","1F638","1F639","1F63A","1F63B","1F63C","1F63D","1F63E","1F63F"]
-    myPath=os.path.dirname(os.path.realpath(__file__))           
+    myPath=os.path.dirname(os.path.realpath(__file__))
     Cimages=glob.glob(os.path.join(myPath,'unicodeEmoticons','*.png'))
     numInList=numpy.zeros((3,1))
     numInList[0]=len(Alist)
@@ -120,7 +119,7 @@ def VWFAloc(scanDict,screenSize=[1024,768]):
     Asequence=numpy.random.randint(0,high=numInList[0],size=36)
     Bsequence=numpy.random.randint(0,high=numInList[1],size=36)
     Csequence=numpy.random.randint(0,high=numInList[2],size=36)
-    
+
     imageNameSequence=['']*numEach
     for iIm in xrange(numEach):
         imageNameSequence[iIm]=Cimages[Csequence[iIm]]
@@ -139,23 +138,23 @@ def VWFAloc(scanDict,screenSize=[1024,768]):
 #    fix1 = visual.ShapeStim(winSub, pos=[0.0,0.0],vertices=((0.0,-0.2),(0.0,0.2)),lineWidth=3.0,
 #            lineColor=black,lineColorSpace='rgb',
 #            fillColor=black,fillColorSpace='rgb',autoLog=False)
-#    
+#
 #    fix2 = visual.ShapeStim(winSub, pos=[0.0,0.0],vertices=((-0.2,0.0),(0.2,0.0)),lineWidth=3.0,
 #            lineColor=black,lineColorSpace='rgb',
 #            fillColor=black,fillColorSpace='rgb',autoLog=False)
- 
- 
- 
+
+
+
     #create the unicode text stimulus
 #    thisText="u"+"\""+Alist[0]+"\""
 #    thisText="\""+Alist[0]+"\""
-    
+
     #actualStim=visual.TextStim(winSub,text=Alist[0],color=black,colorSpace='rgb',units='degrees',height=1,pos=(0,0))
     actualStim=visual.TextStim(winSub,text=Alist[1],color=gray,colorSpace='rgb',units='deg',height=2,pos=(0,0))
-    
+
     msg1x=visual.TextStim(winSub, pos=[0,+8],text='visual wordform area localizer')
-    msg1a = visual.TextStim(winSub, pos=[0,+5],text='During the scan, please keep your eyes on the + in the center.',height=1)    
-    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Hit any button any time the + becomes an X.',height=1)    
+    msg1a = visual.TextStim(winSub, pos=[0,+5],text='During the scan, please keep your eyes on the + in the center.',height=1)
+    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Hit any button any time the + becomes an X.',height=1)
     msg1=visual.TextStim(winSub,pos=[0,-3],text='Subject: Hit a button when ready.',color=[1,-1,-1],colorSpace='rgb')
     msg1.draw()
     msg1a.draw()
@@ -174,11 +173,11 @@ def VWFAloc(scanDict,screenSize=[1024,768]):
     if thisKey in ['q','escape']:
         core.quit() #abort
     else:
-        event.clearEvents()        
+        event.clearEvents()
 
 
-    msg1a = visual.TextStim(winSub, pos=[0,+5],text='   ',height=1)    
-    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Waiting for magnet',height=1)    
+    msg1a = visual.TextStim(winSub, pos=[0,+5],text='   ',height=1)
+    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Waiting for magnet',height=1)
     #msg1c.draw()
     msg1a.draw()
     msg1b.draw()
@@ -186,7 +185,7 @@ def VWFAloc(scanDict,screenSize=[1024,768]):
     #fix1.draw()
     #fix2.draw()
     winSub.flip()
-  
+
     #wait for trigger
     trig=None
     while trig==None:
@@ -196,10 +195,10 @@ def VWFAloc(scanDict,screenSize=[1024,768]):
         core.quit()
     else: #stray key
         event.clearEvents()
-    
-    
-    
-    #start the timer            
+
+
+
+    #start the timer
     scanTimer=core.Clock()
     startTime=scanTimer.getTime()
     timeNow=scanTimer.getTime()
@@ -208,7 +207,7 @@ def VWFAloc(scanDict,screenSize=[1024,768]):
 #    trialTimer=core.Clock()
 #    trialTime=trialTimer.getTime()
     trialTimerNew=core.CountdownTimer()
-    fixTimer=core.Clock() 
+    fixTimer=core.Clock()
     respTimer=core.Clock()
     #start counters for each list
     Acounter=0
@@ -216,13 +215,13 @@ def VWFAloc(scanDict,screenSize=[1024,768]):
     Ccounter=0
     respCounter=0
     numCoins=0
-    #loop through the number of trials, presenting appropriate stimulus or rest 
+    #loop through the number of trials, presenting appropriate stimulus or rest
     for iTrial in xrange(numTrials):
 #        print iTrial
-#        print designMatrix[iTrial,:]  
-        respTimer.reset()        
+#        print designMatrix[iTrial,:]
+        respTimer.reset()
         flipCoin=numpy.random.ranf()
-        if flipCoin<fixPercentage: 
+        if flipCoin<fixPercentage:
             #change fixation size
             fixSize*=1.25
             fixTimer.reset()
@@ -254,7 +253,7 @@ def VWFAloc(scanDict,screenSize=[1024,768]):
             #get stim
 #            thisC=Csequence[Ccounter]
 #            thisText=Clist[thisC]
-            currentImageNumber+=1            
+            currentImageNumber+=1
             if currentImageNumber+1<len(imageNameSequence): #don't load an image past the last one!
                 imageStimDict[currentImageNumber+1]=visual.ImageStim(winSub,image=imageNameSequence[currentImageNumber+1])
             if currentImageNumber>3:
@@ -263,7 +262,7 @@ def VWFAloc(scanDict,screenSize=[1024,768]):
             drawFix=0
             stimType=1
         else:
-            #rest 
+            #rest
             thisText=""
             drawFix=1
             fix0.draw()
@@ -271,13 +270,13 @@ def VWFAloc(scanDict,screenSize=[1024,768]):
             actualStim.setText(thisText)
             #fix1.draw()
             #fix2.draw()
-        
-        #dispay stim for stimDuration amount of time 
+
+        #dispay stim for stimDuration amount of time
         trialTimerNew.add(stimDur)
         while trialTimerNew.getTime()>0:
             timeNow = scanTimer.getTime()
             #trialTime=trialTimer.getTime()
-            #print trialTimerNew.getTime()            
+            #print trialTimerNew.getTime()
             fixTimeCheck=fixTimer.getTime()
             respTimeCheck=respTimer.getTime()
             if fixTimeCheck>fixDuration:
@@ -290,7 +289,7 @@ def VWFAloc(scanDict,screenSize=[1024,768]):
                 fix0.draw()
                 #fix1.draw()
                 #fix2.draw()
-                
+
             msg.setText('t = %.3f' %timeNow)
             msg.draw()
             winSub.flip()
@@ -302,7 +301,7 @@ def VWFAloc(scanDict,screenSize=[1024,768]):
                     subjectResponse[numCoins]=1
         trialTimerNew.add(trialLength-stimDur)
         while trialTimerNew.getTime()>0:
-            #then show fixation for ISI time 
+            #then show fixation for ISI time
             timeNow = scanTimer.getTime()
             fixTimeCheck=fixTimer.getTime()
             respTimeCheck=respTimer.getTime()
@@ -333,7 +332,7 @@ def VWFAloc(scanDict,screenSize=[1024,768]):
         percentCorrect=100.0*float(numCorrect)/(float(numCoins))
     else:
         percentCorrect=100.0
-    
+
     msgText='You got %.0f %% correct!' %(percentCorrect,)
     msg1=visual.TextStim(winSub,pos=[0,+3],text=msgText)
     msg1.draw()
@@ -351,5 +350,3 @@ def VWFAloc(scanDict,screenSize=[1024,768]):
     core.wait(2)
     winSub.close()
     winOp.close()
-
-  

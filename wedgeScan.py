@@ -1,12 +1,11 @@
 #import libraries
-from __future__ import division
 from psychopy import visual
 from psychopy import gui
 from psychopy import core
 from psychopy import data
 from psychopy import misc
 from psychopy import event
-from psychopy import filters
+from psychopy.visual import filters
 from psychopy import monitors
 import time, numpy, random
 #import retinotopyScans
@@ -85,14 +84,15 @@ def wedgeScan(scanDict,screenSize=[1024,768], direction = 1.0):
     fixPercentage = scanDict['fixFraction']
     fixDuration=0.2
     respDuration=1.0
-    subjectResponse=numpy.zeros((numpy.ceil(scanLength*60/100),1))
+    dummyLength=int(numpy.ceil(scanLength*60/100))
+    subjectResponse=numpy.zeros(( dummyLength,1))
     subjectResponse[:]=numpy.nan
     white=[1.0,1.0,1.0]
     gray=[0.0,0.0,0.0]
     black=[-1.0,-1.0,-1.0]
     gridgray=[0.5,0.5,0.5]
     #print winSub.fps()
-    
+
     #test "refresh" rate
     #[frameTimeAvg,frameTimeStd,frameTimeMed] = visual.getMsPerFrame(winSub,nFrames=120, showVisual=True, msg='', msDelay=0.0)
     #print frameTimeAvg
@@ -105,52 +105,52 @@ def wedgeScan(scanDict,screenSize=[1024,768], direction = 1.0):
     #use visibleWedge=[0, 45]???
     #initial orientations
     numRadialCycles = OR/2.0
-    
+
     #initial orientations of wedges
     #first, need starting angle, which is based on preScanRest
     #at beginning of first FULL CYCLE, want to be at right horizon
     #work backwards to find angle
     preDeltaT=scanDict['preScanRest']
     prePhase=direction*preDeltaT*360.0/scanDict['period']
-    
+
 #    wedgeOriInit=numpy.array([270+wedgeWidth/2.0,270-wedgeWidth/2.0,270-3.0*wedgeWidth/2.0])
     wedgeOriInit=numpy.array([90-prePhase-totalWidth/2.0,90-prePhase-totalWidth/6.0,90-prePhase+totalWidth/6.0])
     wedgeOri=numpy.array([0.0,0.0,0.0])
     #for some reason, the wedges are half the radius I'm expecting. Size must mean diameter? So I have to double the OR to get the expected OR
-    wedge1 = visual.RadialStim(winSub,pos = [0, 0],tex='sqrXsqr',radialCycles=numRadialCycles, 
+    wedge1 = visual.RadialStim(winSub,pos = [0, 0],tex='sqrXsqr',radialCycles=numRadialCycles,
          angularCycles=0,angularPhase=0,size=2*OR,color=1,visibleWedge=[0,wedgeWidth],
          ori=wedgeOriInit[0],interpolate=False,angularRes=1000,contrast=contrast,
          autoLog=False)
-#    wedge2 = visual.RadialStim(winSub,pos = [0, 0],tex='sqrXsqr',radialCycles=numRadialCycles, 
+#    wedge2 = visual.RadialStim(winSub,pos = [0, 0],tex='sqrXsqr',radialCycles=numRadialCycles,
 #         angularCycles=0,angularPhase=0,size=OR,color=-1,visibleWedge=[0,wedgeWidth],
 #         ori=wedgeOriInit[1],interpolate=False,angularRes=1000,
 #         autoLog=False)
-#    wedge3 = visual.RadialStim(winSub,pos = [0, 0],tex='sqrXsqr',radialCycles=numRadialCycles, 
+#    wedge3 = visual.RadialStim(winSub,pos = [0, 0],tex='sqrXsqr',radialCycles=numRadialCycles,
 #         angularCycles=0,angularPhase=0,size=OR,color=1,visibleWedge=[0,wedgeWidth],
 #         ori=wedgeOriInit[2],interpolate=False,angularRes=1000,
 #         autoLog=False)
-    
+
     #debugVar=numpy.empty((scanLength*60,3))
     #rotationRate = 1.0/scanDict['period'] #revs per sec
     #rotationRate = 360.0/(refreshRate*scanDict['period']) #deg per frame
 
-    #driftFreq =0.2 #drift in Hz. could be an input param eventually? 
+    #driftFreq =0.2 #drift in Hz. could be an input param eventually?
     driftFreq=scanDict['animFreq']
-    driftReverseFreq = 1.0 #Hz 
+    driftReverseFreq = 1.0 #Hz
     #drift rate in cycles per frame
     #driftRate=driftFreq/60.0
-    
+
     #make a fixation cross which will rotate 45 deg on occasion
     fix0 = visual.Circle(winSub,radius=IR/2.0,edges=32,lineColor=gray,lineColorSpace='rgb',
             fillColor=gray,fillColorSpace='rgb',autoLog=False)
     fix1 = visual.ShapeStim(winSub, pos=[0.0,0.0],vertices=((0.0,-0.15),(0.0,0.15)),lineWidth=3.0,
             lineColor=black,lineColorSpace='rgb',
             fillColor=black,fillColorSpace='rgb',autoLog=False)
-    
+
     fix2 = visual.ShapeStim(winSub, pos=[0.0,0.0],vertices=((-0.15,0.0),(0.15,0.0)),lineWidth=3.0,
             lineColor=black,lineColorSpace='rgb',
             fillColor=black,fillColorSpace='rgb',autoLog=False)
-    
+
     #add to the fixation with a faint background polar grid
     gridRadii=numpy.zeros((5,1))
     gridRadii[0]=IR
@@ -160,25 +160,25 @@ def wedgeScan(scanDict,screenSize=[1024,768], direction = 1.0):
     gridRadii[4]=8*IR
     gridCircle=visual.Circle(winSub,radius=gridRadii[0],edges=32,lineColor=gridgray,lineColorSpace='rgb',autoLog=False)
     gridEnds=numpy.zeros((8,2))
-    gridEnds[0,0]=0 
-    gridEnds[0,1]=OR 
-    gridEnds[1,0]=OR 
+    gridEnds[0,0]=0
+    gridEnds[0,1]=OR
+    gridEnds[1,0]=OR
     gridEnds[1,1]=OR
-    gridEnds[2,0]=OR 
-    gridEnds[2,1]=0 
-    gridEnds[3,0]=OR 
-    gridEnds[3,1]=-OR 
-    gridEnds[4,0]=0 
-    gridEnds[4,1]=-OR 
-    gridEnds[5,0]=-OR 
+    gridEnds[2,0]=OR
+    gridEnds[2,1]=0
+    gridEnds[3,0]=OR
+    gridEnds[3,1]=-OR
+    gridEnds[4,0]=0
+    gridEnds[4,1]=-OR
+    gridEnds[5,0]=-OR
     gridEnds[5,1]=-OR
-    gridEnds[6,0]=-OR 
+    gridEnds[6,0]=-OR
     gridEnds[6,1]=0
-    gridEnds[7,0]=-OR 
+    gridEnds[7,0]=-OR
     gridEnds[7,1]=OR
     gridSpoke=visual.Line(winSub,start=(0,0),end=(0,OR),lineColor=gridgray,lineColorSpace='rgb',autoLog=False)
-    
-    
+
+
     #stim.setOri(t*rotationRate*360.0)
     #stim.setRadialPhase(driftRate,'+')
     #stim.setPos()#something here
@@ -186,11 +186,11 @@ def wedgeScan(scanDict,screenSize=[1024,768], direction = 1.0):
         scanNameText='%s rotating wedge, %2.1f degrees' % ('CW',width)
     else:
         scanNameText='%s rotating wedge, %2.1f degrees' % ('CCW',width)
-        
+
     msg1=visual.TextStim(winSub,pos=[0,+2],text='%s \n\nSubject: press a button when ready.'%scanNameText)
     msg1.draw()
     winSub.flip()
-    
+
     #wait for subject
     thisKey=None
     responseKeys=list(scanDict['subjectResponse'])
@@ -201,7 +201,7 @@ def wedgeScan(scanDict,screenSize=[1024,768], direction = 1.0):
     if thisKey in ['q','escape']:
         core.quit() #abort
     else:
-        event.clearEvents()        
+        event.clearEvents()
     responseKeys=list(scanDict['subjectResponse'])
 #    while len(event.getKeys())==0:
 #        core.wait(0.05)
@@ -209,7 +209,7 @@ def wedgeScan(scanDict,screenSize=[1024,768], direction = 1.0):
     msg1=visual.TextStim(winSub,pos=[0,+3],text='Noise coming....')
     msg1.draw()
     winSub.flip()
-  
+
     #wait for trigger
     trig=None
     triggerKeys=list(scanDict['trigger'])
@@ -222,8 +222,8 @@ def wedgeScan(scanDict,screenSize=[1024,768], direction = 1.0):
         core.quit()
     else: #stray key
         event.clearEvents()
-    
-    #start the timer            
+
+    #start the timer
     scanTimer=core.Clock()
     startTime=scanTimer.getTime()
 
@@ -237,21 +237,21 @@ def wedgeScan(scanDict,screenSize=[1024,768], direction = 1.0):
     gridCircle.draw()
     gridCircle.setRadius(gridRadii[4])
     gridCircle.draw()
-    gridSpoke.draw()  
+    gridSpoke.draw()
     gridSpoke.setEnd(gridEnds[1,])
-    gridSpoke.draw()  
+    gridSpoke.draw()
     gridSpoke.setEnd(gridEnds[2,])
-    gridSpoke.draw()  
+    gridSpoke.draw()
     gridSpoke.setEnd(gridEnds[3,])
-    gridSpoke.draw()  
+    gridSpoke.draw()
     gridSpoke.setEnd(gridEnds[4,])
-    gridSpoke.draw()  
+    gridSpoke.draw()
     gridSpoke.setEnd(gridEnds[5,])
-    gridSpoke.draw()  
+    gridSpoke.draw()
     gridSpoke.setEnd(gridEnds[6,])
-    gridSpoke.draw()  
+    gridSpoke.draw()
     gridSpoke.setEnd(gridEnds[7,])
-    gridSpoke.draw()  
+    gridSpoke.draw()
     wedge1.draw()
     wedge1.setOri(wedgeOriInit[1])
     wedge1.draw()
@@ -264,7 +264,7 @@ def wedgeScan(scanDict,screenSize=[1024,768], direction = 1.0):
         wedge1.draw()
         wedge1.setOri(wedgeOriInit[2]+180)
         wedge1.draw()
-        
+
 #    wedge2.draw()
 #    wedge3.draw()
     fix0.draw()
@@ -279,14 +279,14 @@ def wedgeScan(scanDict,screenSize=[1024,768], direction = 1.0):
         msg = visual.TextStim(winOp,pos=[0,-0.5],text = 't = %.3f' %timeNow)
         msg.draw()
     loopCounter=0
-    fixTimer=core.Clock() 
+    fixTimer=core.Clock()
     respTimer=core.Clock()
     fixOri=0
     numCoins=0
     wedgeRadPhi=numpy.random.rand(3)
     event.clearEvents()
     while timeNow<startTime+scanLength: #loop for scan duration
-        timeBefore = timeNow    
+        timeBefore = timeNow
         timeNow = scanTimer.getTime()
         deltaT=timeNow - startTime
         deltaTinc=timeNow-timeBefore
@@ -313,7 +313,7 @@ def wedgeScan(scanDict,screenSize=[1024,768], direction = 1.0):
         if loopCounter%100 ==0 and loopCounter>10:
             #flip a coin to decide
             flipCoin=numpy.random.ranf()
-            if flipCoin<fixPercentage: 
+            if flipCoin<fixPercentage:
                 #reset timers/change ori
                 fixOri=45
                 fixTimer.reset()
@@ -337,23 +337,23 @@ def wedgeScan(scanDict,screenSize=[1024,768], direction = 1.0):
         gridCircle.draw()
         gridCircle.setRadius(gridRadii[4])
         gridCircle.draw()
-        gridSpoke.draw()    
+        gridSpoke.draw()
         gridSpoke.setEnd(gridEnds[0,])
-        gridSpoke.draw()  
+        gridSpoke.draw()
         gridSpoke.setEnd(gridEnds[1,])
-        gridSpoke.draw()  
+        gridSpoke.draw()
         gridSpoke.setEnd(gridEnds[2,])
-        gridSpoke.draw()  
+        gridSpoke.draw()
         gridSpoke.setEnd(gridEnds[3,])
-        gridSpoke.draw()  
+        gridSpoke.draw()
         gridSpoke.setEnd(gridEnds[4,])
-        gridSpoke.draw()  
+        gridSpoke.draw()
         gridSpoke.setEnd(gridEnds[5,])
-        gridSpoke.draw()  
+        gridSpoke.draw()
         gridSpoke.setEnd(gridEnds[6,])
-        gridSpoke.draw()  
+        gridSpoke.draw()
         gridSpoke.setEnd(gridEnds[7,])
-        gridSpoke.draw()  
+        gridSpoke.draw()
         wedge1.setRadialPhase(wedgeRadPhi[0])
         wedge1.setOri(wedgeOri[0])
         wedge1.draw()
@@ -373,7 +373,7 @@ def wedgeScan(scanDict,screenSize=[1024,768], direction = 1.0):
             wedge1.setRadialPhase(wedgeRadPhi[2])
             wedge1.setOri(wedgeOri[2]+180)
             wedge1.draw()
-            
+
 #        wedge2.draw()
 #        wedge3.draw()
         fix0.draw()
@@ -388,14 +388,14 @@ def wedgeScan(scanDict,screenSize=[1024,768], direction = 1.0):
             winOp.flip()
         #row+=1
         #core.wait(3.0/60.0)
-    
+
         #count number of keypresses since previous frame, break if non-zero
         for key in event.getKeys():
             if key in ['q','escape']:
                 core.quit()
             elif key in responseKeys and respTimeCheck<respDuration:
                 subjectResponse[numCoins]=1
-        
+
         loopCounter +=1
         #core.wait(5.0)
         #outFile = open("debug.txt","w")
@@ -403,9 +403,9 @@ def wedgeScan(scanDict,screenSize=[1024,768], direction = 1.0):
         #outFile.close()
         #numpy.savetxt('debug.txt',debugVar,fmt='%.3f')
         #numpy.savetxt('debugchop.txt',debugVar[:row,],fmt='%.3f')
-    
+
     #calculate %age of responses that were correct
-    #find non-nan  
+    #find non-nan
     #np.isnan(a) gives boolean array of true/a=false
     #np.isnan(a).any(1) gives a col vector of the rows with nans
     #~np.isnan(a).any(1) inverts the logic

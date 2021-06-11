@@ -1,12 +1,11 @@
  #import libraries
-from __future__ import division
 from psychopy import visual
 from psychopy import gui
 from psychopy import core
 from psychopy import data
 from psychopy import misc
 from psychopy import event
-from psychopy import filters
+from psychopy.visual import filters
 from psychopy import monitors
 import time, numpy, random
 #import retinotopyScans
@@ -16,7 +15,7 @@ import os
 import glob
 import imp
 import datetime
-    
+
 #############################################################################
 ################### achromatic wedges  ###################################
 ################### asymmetric timing #######################################
@@ -28,7 +27,7 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
     #length of scan in s
     scanLength=float(scanDict['numCycles']*scanDict['period']+scanDict['preScanRest'])
     #open subject window
-    winSub = visual.Window(screenSize,monitor=scanDict['monCalFile'],units="deg",screen=scanDict['subjectScreen'], 
+    winSub = visual.Window(screenSize,monitor=scanDict['monCalFile'],units="deg",screen=scanDict['subjectScreen'],
                        color=[0.0,0.0,0.0],colorSpace='rgb',fullscr=False,allowGUI=False)
     winOp = visual.Window([500,200],monitor='testMonitor',units='deg',screen=scanDict['operatorScreen'],
                           color=[0.0,0.0,0.0],colorSpace='rgb')
@@ -41,7 +40,7 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
     #parse out vars from scanDict
     IR=scanDict['innerRadius']
     OR=scanDict['outerRadius']
-    
+
     #get actual size of window--useful in the functions
     subWinSize=winSub.size
     screenSize=numpy.array([subWinSize[0],subWinSize[1]])
@@ -55,7 +54,7 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
     black=[-1.0,-1.0,-1.0]
 
     #print winSub.fps()
-    
+
     #test "refresh" rate
     #[frameTimeAvg,frameTimeStd,frameTimeMed] = visual.getMsPerFrame(winSub,nFrames=120, showVisual=True, msg='', msDelay=0.0)
     #print frameTimeAvg
@@ -74,7 +73,7 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
     numRadialCycles = OR/2.0
  #   wedgeOriInit=numpy.arange(0,360,30)
  #   wedgeSize=[0.0,30.0]
-    wedge1 = visual.RadialStim(winSub,pos = [0, 0],tex='sqrXsqr',radialCycles=numRadialCycles, 
+    wedge1 = visual.RadialStim(winSub,pos = [0, 0],tex='sqrXsqr',radialCycles=numRadialCycles,
          angularCycles=0,
          size=OR*2,color=1,visibleWedge=wedgeSize,ori=0,interpolate=False,
          autoLog=False)
@@ -99,22 +98,22 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
         maskA=visual.Rect(win=winSub,units='norm',pos=(-0.5,0),width=1.0, height=2.0,fillColor=gray,fillColorSpace='rgb',lineColor=None)
         maskB=visual.Rect(win=winSub,units='norm',pos=(0.5,0),width=1.0, height=2.0,fillColor=gray,fillColorSpace='rgb',lineColor=None)
 
-    driftFreq =2.0 #drift in Hz. could be an input param eventually? 
+    driftFreq =2.0 #drift in Hz. could be an input param eventually?
 
-    driftReverseFreq = 0.5 #Hz 
-    
+    driftReverseFreq = 0.5 #Hz
+
     #make a fixation cross which will rotate 45 deg on occasion
     fix0 = visual.Circle(winSub,radius=IR/2.0,edges=32,lineColor=gray,lineColorSpace='rgb',
             fillColor=gray,fillColorSpace='rgb',autoLog=False)
     fix1 = visual.ShapeStim(winSub, pos=[0.0,0.0],vertices=((0.0,-0.15),(0.0,0.15)),lineWidth=3.0,
             lineColor=black,lineColorSpace='rgb',
             fillColor=black,fillColorSpace='rgb',autoLog=False)
-    
+
     fix2 = visual.ShapeStim(winSub, pos=[0.0,0.0],vertices=((-0.15,0.0),(0.15,0.0)),lineWidth=3.0,
             lineColor=black,lineColorSpace='rgb',
             fillColor=black,fillColorSpace='rgb',autoLog=False)
-    
-    
+
+
     if offTimeBehavior==1:
         scanNameText='drifting checkerboard, on/off'
     elif offTimeBehavior==2:
@@ -124,11 +123,11 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
             scanNameText='drifting checkerboard, center/surround'
         else:
             scanNameText='drifting checkerboard, alternating halves'
-            
+
     msg1=visual.TextStim(winSub,pos=[0,+2],text='%s \n\nSubject: press a button when ready.'%scanNameText)
     msg1.draw()
     winSub.flip()
-    
+
     #wait for subject
     thisKey=None
     while thisKey==None:
@@ -136,14 +135,14 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
     if thisKey in ['q','escape']:
         core.quit() #abort
     else:
-        event.clearEvents()        
-#    while len(event.getKeys())==0: 
+        event.clearEvents()
+#    while len(event.getKeys())==0:
 #        core.wait(0.05)
 #    event.clearEvents()
     msg1=visual.TextStim(winSub,pos=[0,+3],text='Noise coming....')
     msg1.draw()
     winSub.flip()
-  
+
     #wait for trigger
     trig=None
     while trig==None:
@@ -153,8 +152,8 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
         core.quit()
     else: #stray key
         event.clearEvents()
-    
-    #start the timer            
+
+    #start the timer
     scanTimer=core.Clock()
     startTime=scanTimer.getTime()
     epochTimer = core.Clock()
@@ -181,22 +180,22 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
     msg = visual.TextStim(winOp,pos=[0,-1],text = 't = %.3f' %timeNow)
     msg.draw()
     loopCounter=0
-    fixTimer=core.Clock() 
+    fixTimer=core.Clock()
     respTimer=core.Clock()
     fixOri=0
     numCoins=0
     event.clearEvents()
     while timeNow<startTime+scanLength: #loop for scan duration
-        timeBefore = timeNow    
+        timeBefore = timeNow
         timeNow = scanTimer.getTime()
         deltaT=timeNow - startTime
         deltaTinc=timeNow-timeBefore
-        
+
         #every 100 frames, decide if the fixation point should change or not
         if loopCounter%100 ==0 and loopCounter>10:
             #flip a coin to decide
             flipCoin=numpy.random.ranf()
-            if flipCoin<fixPercentage: 
+            if flipCoin<fixPercentage:
                 #reset timers/change ori
                 fixOri=45
                 fixTimer.reset()
@@ -296,14 +295,14 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
         winOp.flip()
         #row+=1
         #core.wait(3.0/60.0)
-    
+
         #count number of keypresses since previous frame, break if non-zero
         for key in event.getKeys():
             if key in ['q','escape']:
                 core.quit()
             elif key in ['r','g','b','y','1','2','3','4'] and respTimeCheck<respDuration:
                 subjectResponse[numCoins]=1
-        
+
         loopCounter +=1
         #core.wait(5.0)
         #outFile = open("debug.txt","w")
@@ -311,9 +310,9 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
         #outFile.close()
         #numpy.savetxt('debug.txt',debugVar,fmt='%.3f')
         #numpy.savetxt('debugchop.txt',debugVar[:row,],fmt='%.3f')
-    
+
     #calculate %age of responses that were correct
-    #find non-nan  
+    #find non-nan
     #np.isnan(a) gives boolean array of true/a=false
     #np.isnan(a).any(1) gives a col vector of the rows with nans
     #~np.isnan(a).any(1) inverts the logic
@@ -325,7 +324,7 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
         percentCorrect=100.0*float(numCorrect)/(float(numCoins))
     else:
         percentCorrect=100.0
-    
+
     msgText='You got %.0f %% correct!' %(percentCorrect,)
     msg1=visual.TextStim(winSub,pos=[0,+3],text=msgText)
     msg1.draw()
@@ -350,7 +349,7 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #    #length of scan in s
 #    scanLength=float(scanDict['numCycles']*scanDict['period']+scanDict['preScanRest'])
 #    #open subject window
-#    winSub = visual.Window(screenSize,monitor=scanDict['monCalFile'],units="deg",screen=scanDict['subjectScreen'], 
+#    winSub = visual.Window(screenSize,monitor=scanDict['monCalFile'],units="deg",screen=scanDict['subjectScreen'],
 #                       color=[-1.0,-1.0,-1.0],colorSpace='rgb',fullscr=True,allowGUI=False)
 #    #needs to be flexible--how do I extract the dims from screen?
 ##    screenSize=numpy.array([1600,1200])
@@ -376,15 +375,15 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #    white=[1.0,1.0,1.0]
 #    gray=[0.0,0.0,0.0]
 #    black=[-1.0,-1.0,-1.0]
-#    
+#
 ##    plt.ion()
 ##    plt.plot(plotResp[0:2],'ro')
 ##    plt.ylabel('subject responses')
 ##    plt.show()
-##    plt.axis([0,scanLength*0.6,-0.1,1.1])    
-#    
-#    operatorWindow=visual.Window([1024,768],monitor='testMonitor',units='deg',screen=scanDict['operatorScreen'],color=[0,0,0],colorSpace='rgb')                       
-#    
+##    plt.axis([0,scanLength*0.6,-0.1,1.1])
+#
+#    operatorWindow=visual.Window([1024,768],monitor='testMonitor',units='deg',screen=scanDict['operatorScreen'],color=[0,0,0],colorSpace='rgb')
+#
 #    opPlot=visual.ElementArrayStim(operatorWindow,units='pix',xys=plotResp,sizes=7,nElements=plotMax,fieldPos=(-500,-384),
 #                                   colors=plotColors,colorSpace='rgb',sfs=0,fieldShape='square',
 #                                   elementMask='circle')
@@ -400,7 +399,7 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #    #create a designmatrix for trigger-based counting
 #    #first create an array--length = total number of Trs
 #    numTr=scanLength/scanDict['Tr']
-#    designMatrix=numpy.zeros((numTr,1))    
+#    designMatrix=numpy.zeros((numTr,1))
 #
 #    #first N Trs are already zero--rest
 #    #figure out when the stim should be on
@@ -416,10 +415,10 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #    colorBGf=numpy.asarray(colorBG,dtype=float)
 #    colorBGp=2*colorBGf-1
 #
-# 
+#
 #    #let's try making some numpy arrays of the checkerboards! translated from matlab arrays
 #    #size of image--hardcode for now, but needs to be 2^n that fits inside smaller screen dimension
-##    twoN=numpy.ones((13))    
+##    twoN=numpy.ones((13))
 ##    for n in range(13):
 ##        twoN[n]=pow(2.0,n)
 ##    twoNsize=numpy.nonzero(twoN>screenSize[1])
@@ -438,7 +437,7 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #    elif screenSize[0]<2057:
 #        imageSize=2048
 #    halfSize=numpy.int(imageSize/2)
-#        
+#
 #    print type(imageSize)
 #    print type(halfSize)
 #    #create arrays of x,y, and r,theta
@@ -453,21 +452,21 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #    xOverY=x/y
 #    theta = numpy.arctan(xOverY)
 #    theta[halfSize+1,halfSize+1]=0
-#    
+#
 #    #number of wedges (NOT pairs!!)
 #    nWedges=72.0
-#    #number of rings 
+#    #number of rings
 #    nRings=3.0
 #    #width of wedges in radians
 #    wedgeWidth = 2.0*math.pi/nWedges #CHECK
 #    ringWidth = 2.0/nRings#1/over? #CHECK
 #    #ring function--describes how the ring width increases with eccentricity
 #    ringFunction=numpy.power(r/halfSize,0.3)+0.2
-#    
-#    wedgeMask = 0.5 - (numpy.mod(theta,wedgeWidth)>(wedgeWidth/2.0)) 
+#
+#    wedgeMask = 0.5 - (numpy.mod(theta,wedgeWidth)>(wedgeWidth/2.0))
 #    rmA=numpy.mod(ringFunction,ringWidth)>(ringWidth/2.0)
 #    ringMask = 1 - 2.0*(rmA)
-#    
+#
 #    checkerBoardLogic=wedgeMask*ringMask + 0.5
 #    #checkerBoardBG=r>
 #    #initialize an array of 1024x1024x3 for RGB channels
@@ -495,7 +494,7 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #    checkerBoardA[:,:,0]=checkerBoardAR
 #    checkerBoardA[:,:,1]=checkerBoardAG
 #    checkerBoardA[:,:,2]=checkerBoardAB
-#    
+#
 #    checkerBoardB=numpy.ones((imageSize, imageSize,3))
 #    checkerBoardBR=numpy.ones((imageSize, imageSize))
 #    checkerBoardBB=numpy.ones((imageSize, imageSize))
@@ -519,27 +518,27 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #    stimA=visual.GratingStim(winSub,tex=checkerBoardA,size=imageSize,sf=1/imageSize,units='pix',texRes=imageSize)
 #    stimB=visual.GratingStim(winSub,tex=checkerBoardB,size=imageSize,sf=1/imageSize,units='pix')
 #
-#   
-#    ReverseFreq =flickFreq #drift in Hz. could be an input param eventually? 
 #
-#    
+#    ReverseFreq =flickFreq #drift in Hz. could be an input param eventually?
+#
+#
 #    #make a fixation cross which will rotate 45 deg on occasion
 #    fix0 = visual.Circle(winSub,radius=IR/2.0,edges=32,lineColor=gray,lineColorSpace='rgb',
 #            fillColor=gray,fillColorSpace='rgb',autoLog=False)
 #    fix1 = visual.ShapeStim(winSub, pos=[0.0,0.0],vertices=((0.0,-0.2),(0.0,0.2)),lineWidth=3.0,
 #            lineColor=black,lineColorSpace='rgb',
 #            fillColor=black,fillColorSpace='rgb',autoLog=False)
-#    
+#
 #    fix2 = visual.ShapeStim(winSub, pos=[0.0,0.0],vertices=((-0.2,0.0),(0.2,0.0)),lineWidth=3.0,
 #            lineColor=black,lineColorSpace='rgb',
 #            fillColor=black,fillColorSpace='rgb',autoLog=False)
-#    
+#
 #    #stim.setOri(t*rotationRate*360.0)
 #    #stim.setRadialPhase(driftRate,'+')
 #    #stim.setPos()#something here
 #    msg1x=visual.TextStim(winSub, pos=[0,+8],text='flickering checkerboard, asymmetric timing')
-#    msg1a = visual.TextStim(winSub, pos=[0,+5],text='During the scan, please keep your eyes on the + in the center.',height=1)    
-#    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Hit any button any time the + becomes an X.',height=1)    
+#    msg1a = visual.TextStim(winSub, pos=[0,+5],text='During the scan, please keep your eyes on the + in the center.',height=1)
+#    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Hit any button any time the + becomes an X.',height=1)
 #    msg1=visual.TextStim(winSub,pos=[0,-3],text='Subject: Hit a key when ready.',color=[1,-1,-1],colorSpace='rgb')
 #    msg1.draw()
 #    msg1a.draw()
@@ -558,8 +557,8 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #    if thisKey in ['q','escape']:
 #        core.quit() #abort
 #    else:
-#        event.clearEvents()        
-##    while len(event.getKeys())==0: 
+#        event.clearEvents()
+##    while len(event.getKeys())==0:
 ##        core.wait(0.05)
 ##    event.clearEvents()
 ##    msg1=visual.TextStim(winSub,pos=[0,+1],text='Waiting for magnet....',color=[1,1,1],colorSpace='rgb',height=3)
@@ -568,8 +567,8 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 ##    fix1.draw()
 ##    fix2.draw()
 ##    winSub.flip()
-#    msg1a = visual.TextStim(winSub, pos=[0,+5],text='   ',height=1)    
-#    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Waiting for magnet',height=1)    
+#    msg1a = visual.TextStim(winSub, pos=[0,+5],text='   ',height=1)
+#    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Waiting for magnet',height=1)
 #    #msg1c=visual.TextStim(winSub,pos=[0,-3],text='Subject: Hit a key when ready.',color=[1,-1,-1],colorSpace='rgb')
 #    msg1c.draw()
 #    msg1a.draw()
@@ -578,7 +577,7 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #    fix1.draw()
 #    fix2.draw()
 #    winSub.flip()
-#  
+#
 #    #wait for trigger
 #    trig=None
 #    while trig==None:
@@ -588,8 +587,8 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #        core.quit()
 #    else: #stray key
 #        event.clearEvents()
-#    
-#    #start the timer            
+#
+#    #start the timer
 #    scanTimer=core.Clock()
 #    startTime=scanTimer.getTime()
 #
@@ -615,9 +614,9 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #    msg4.draw()
 #    msg5 = visual.TextStim(operatorWindow,units='pix',text = 'time since correct',pos=(0.0,-15),height=2)
 #    msg5.draw()
-#    
 #
-#    fixTimer=core.Clock() 
+#
+#    fixTimer=core.Clock()
 #    respTimer=core.Clock()
 #    flickerTimer=core.Clock()
 #
@@ -630,9 +629,9 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #        elif key in ['r','g','b','y'] and respTimeCheck<respDuration:
 #            subjectResponse[numCoins]=1
 #    #time based loop advancement
-#   
+#
 #    respCounter=0
-#   
+#
 #    #display rest for pre-scan duration
 #    while timeNow<scanDict['preScanRest']:
 #        timeNow = scanTimer.getTime()
@@ -641,7 +640,7 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #        if restLoopCounter%100 ==0 and restLoopCounter>10:
 #            #flip a coin to decide
 #            flipCoin=numpy.random.ranf()
-#            if flipCoin<fixPercentage: 
+#            if flipCoin<fixPercentage:
 #                #reset timers/change ori
 #                fixOri=45
 #                fixTimer.reset()
@@ -674,7 +673,7 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #                plotResp[numCoins]=1
 #                subRespArray[respCounter,2]=1
 ##                elif key in ['t']:
-##                    #increment loop count for each trigger 
+##                    #increment loop count for each trigger
 ##                    restLoopCounter +=1
 #        #update the operator graph
 #        #determine response correctness and append to plot vertices variable
@@ -722,27 +721,27 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #        opPlot.draw()
 #        restLoopCounter+=1
 ##            if restLoopCounter%300 and restLoopCounter>5:
-##                plt.plot(plotResp[0:numCoins+1],'ro')            
+##                plt.plot(plotResp[0:numCoins+1],'ro')
 ##                plt.draw
 #
-#    
-#    #pre-scan rest is done.        
+#
+#    #pre-scan rest is done.
 #    #prepare for looping through the cycles
 #    epochTimer = core.Clock()
 #
 #
 #    #time based looping through stimulus
 #    while timeNow<startTime+scanLength: #loop until total scan duration has elapsed
-#        timeBefore = timeNow    
+#        timeBefore = timeNow
 #        timeNow = scanTimer.getTime()
 #        deltaT=timeNow - startTime
 #        deltaTinc=timeNow-timeBefore
-#        
+#
 #        #every 100 frames, decide if the fixation point should change or not
 #        if loopCounter%100 ==0 and loopCounter>10:
 #            #flip a coin to decide
 #            flipCoin=numpy.random.ranf()
-#            if flipCoin<fixPercentage: 
+#            if flipCoin<fixPercentage:
 #                #reset timers/change ori
 #                fixOri=45
 #                fixTimer.reset()
@@ -761,7 +760,7 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #
 #        fix1.setOri(fixOri)
 #        fix2.setOri(fixOri)
-#        
+#
 #        # display stimulus for stimDuration time, then rest for restDuration time
 #        epochTime=epochTimer.getTime()
 #        # epoch of stimulus
@@ -775,7 +774,7 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #            elif flickerTimeCheck<1/ReverseFreq:
 #                #second half of period, show wedge 2
 ##                image2.draw()
-#                 stimB.draw()               
+#                 stimB.draw()
 #            else:
 #                #clocked over, reset timer
 #                #could also do some modulus of timing
@@ -790,14 +789,14 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #            fix2.draw()
 #        else:
 #            epochTimer.reset()
-#        
+#
 #        msg.setText('t = %.3f' %timeNow)
 #        msg.draw()
 #        operatorWindow.flip()
 #        winSub.flip()
 #        #row+=1
 #        #core.wait(3.0/60.0)
-#    
+#
 #        #count number of keypresses since previous frame, break if non-zero
 #        for key in event.getKeys():
 #            if key in ['q','escape']:
@@ -806,7 +805,7 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #                subjectResponse[numCoins]=1
 #                subRespArray[respCounter,2]=1
 ##            if loopCounter%300 and loopCounter>5:
-##                plt.plot(plotResp[0:numCoins+1],'ro')            
+##                plt.plot(plotResp[0:numCoins+1],'ro')
 ##                plt.draw
 #
 #        #update the operator graph
@@ -856,14 +855,14 @@ def achromaticWedges(scanDict, screenSize=[1024,768]):
 #        opPlot.setXYs(plotResp)
 #        opPlot.setColors(plotColors)
 #        opPlot.draw()
-#        loopCounter +=1        
-#        
+#        loopCounter +=1
+#
 #
 #    findResp=subjectResponse[~numpy.isnan(subjectResponse)]
 #    calcResp=findResp[findResp==1]
 #    numCorrect=float(calcResp.shape[0])
 #    percentCorrect=float(numCorrect)/(float(numCoins))
-#    
+#
 #    msgText='You got %f correct!' %(percentCorrect,)
 #    msg1=visual.TextStim(winSub,pos=[0,+3],text=msgText)
 #    msg1.draw()

@@ -1,12 +1,11 @@
 #import libraries
-from __future__ import division
 from psychopy import visual
 from psychopy import gui
 from psychopy import core
 from psychopy import data
 from psychopy import misc
 from psychopy import event
-from psychopy import filters
+from psychopy.visual import filters
 from psychopy import monitors
 import time, numpy, random
 #import retinotopyScans
@@ -21,7 +20,7 @@ import datetime
 #############################################################################
 def driftChecker(scanDict,screenSize=[1024,768],offTimeBehavior=1,maskType=1):
     #do wedge
-    
+
     #offtimeBehaior:
         #1--full field, drift vs rest
         #2--full field, drift vs static
@@ -82,14 +81,15 @@ def driftChecker(scanDict,screenSize=[1024,768],offTimeBehavior=1,maskType=1):
     fixPercentage = scanDict['fixFraction']
     fixDuration=0.2
     respDuration=1.0
-    subjectResponse=numpy.zeros((numpy.ceil(scanLength*60/100),1))
+    dummyLength=int(numpy.ceil(scanLength*60/100))
+    subjectResponse=numpy.zeros((dummyLength,1))
     subjectResponse[:]=numpy.nan
     white=[1.0,1.0,1.0]
     gray=[0.0,0.0,0.0]
     black=[-1.0,-1.0,-1.0]
 
     #print winSub.fps()
-    
+
     #test "refresh" rate
     #[frameTimeAvg,frameTimeStd,frameTimeMed] = visual.getMsPerFrame(winSub,nFrames=120, showVisual=True, msg='', msDelay=0.0)
     #print frameTimeAvg
@@ -108,13 +108,13 @@ def driftChecker(scanDict,screenSize=[1024,768],offTimeBehavior=1,maskType=1):
     numRadialCycles = OR/2.0
  #   wedgeOriInit=numpy.arange(0,360,30)
  #   wedgeSize=[0.0,30.0]
-    wedge1 = visual.RadialStim(winSub,pos = [0, 0],tex='sqrXsqr',radialCycles=numRadialCycles, 
+    wedge1 = visual.RadialStim(winSub,pos = [0, 0],tex='sqrXsqr',radialCycles=numRadialCycles,
          angularCycles=0,
          size=OR*2,color=1,visibleWedge=wedgeSize,ori=0,interpolate=False,contrast=contrast,
          autoLog=False)
 
     altWedges=numpy.random.rand(10)
-    for iGrr in xrange(0,10):
+    for iGrr in range(0,10):
         altWedges[iGrr]=(-1)**iGrr
     #organize the masks for the two masked runs
     if offTimeBehavior==3 and maskType==1:
@@ -134,20 +134,20 @@ def driftChecker(scanDict,screenSize=[1024,768],offTimeBehavior=1,maskType=1):
         maskB=visual.Rect(win=winSub,units='norm',pos=(0.5,0),width=1.0, height=2.0,fillColor=gray,fillColorSpace='rgb',lineColor=None)
 
     driftFreq=scanDict['animFreq']
-    driftReverseFreq = 0.5 #Hz 
-    
+    driftReverseFreq = 0.5 #Hz
+
     #make a fixation cross which will rotate 45 deg on occasion
     fix0 = visual.Circle(winSub,radius=IR/2.0,edges=32,lineColor=gray,lineColorSpace='rgb',
             fillColor=gray,fillColorSpace='rgb',autoLog=False)
     fix1 = visual.ShapeStim(winSub, pos=[0.0,0.0],vertices=((0.0,-0.15),(0.0,0.15)),lineWidth=3.0,
             lineColor=black,lineColorSpace='rgb',
             fillColor=black,fillColorSpace='rgb',autoLog=False)
-    
+
     fix2 = visual.ShapeStim(winSub, pos=[0.0,0.0],vertices=((-0.15,0.0),(0.15,0.0)),lineWidth=3.0,
             lineColor=black,lineColorSpace='rgb',
             fillColor=black,fillColorSpace='rgb',autoLog=False)
-    
-    
+
+
     if offTimeBehavior==1:
         scanNameText='drifting checkerboard, on/off'
     elif offTimeBehavior==2:
@@ -172,8 +172,8 @@ def driftChecker(scanDict,screenSize=[1024,768],offTimeBehavior=1,maskType=1):
     if thisKey in ['q','escape']:
         core.quit() #abort
     else:
-        event.clearEvents()        
-#    while len(event.getKeys())==0: 
+        event.clearEvents()
+#    while len(event.getKeys())==0:
 #        core.wait(0.05)
 #    event.clearEvents()
     responseKeys=list(scanDict['subjectResponse'])
@@ -192,18 +192,19 @@ def driftChecker(scanDict,screenSize=[1024,768],offTimeBehavior=1,maskType=1):
         core.quit()
     else: #stray key
         event.clearEvents()
-    
-    #start the timer            
+
+    #start the timer
     scanTimer=core.Clock()
     startTime=scanTimer.getTime()
     epochTimer = core.Clock()
     #draw the stimulus
-    for iWedge in xrange(0,20,2):
+    for iWedge in range(0,20,2):
         wedge1.setOri(startOris[iWedge])
-        wedge1.setRadialPhase(startPhases[iWedge/2])
+        #print(iWedge,iWedge/2,type(iWedge),type(iWedge/2))
+        wedge1.setRadialPhase(startPhases[int(iWedge/2)])
         wedge1.draw()
         wedge1.setOri(startOris[iWedge+1])
-        wedge1.setRadialPhase(startPhases[iWedge/2]+0.5)
+        wedge1.setRadialPhase(startPhases[int(iWedge/2)]+0.5)
         wedge1.draw()
     if offTimeBehavior==3:
         nowMask=maskA
@@ -217,11 +218,11 @@ def driftChecker(scanDict,screenSize=[1024,768],offTimeBehavior=1,maskType=1):
     timeNow = scanTimer.getTime()
     #row=1
 #    #msg = visual.TextStim(winSub, pos=[-screenSize[0]/2+45,-screenSize[1]/2+15],units='pix',text = 't = %.3f' %timeNow)
-    if screenCount==2:    
+    if screenCount==2:
         msg = visual.TextStim(winOp,pos=[0,-0.5],text = 't = %.3f' %timeNow)
         msg.draw()
     loopCounter=0
-    fixTimer=core.Clock() 
+    fixTimer=core.Clock()
     respTimer=core.Clock()
     fixOri=0
     numCoins=0
@@ -242,7 +243,7 @@ def driftChecker(scanDict,screenSize=[1024,768],offTimeBehavior=1,maskType=1):
         if loopCounter%100 ==0 and loopCounter>10:
             #flip a coin to decide
             flipCoin=numpy.random.ranf()
-            if flipCoin<fixPercentage: 
+            if flipCoin<fixPercentage:
                 #reset timers/change ori
                 fixOri=45
                 fixTimer.reset()
@@ -270,13 +271,13 @@ def driftChecker(scanDict,screenSize=[1024,768],offTimeBehavior=1,maskType=1):
                 phaseSign = -1.0
             phaseSignVec=phaseSign*altWedges
 #            nowPhase=startPhases + deltaPhase*(phaseSignVec)
-            nowPhase=oldPhases+deltaPhaseInc*(phaseSignVec)           
-            for iWedge in xrange(0,20,2):
+            nowPhase=oldPhases+deltaPhaseInc*(phaseSignVec)
+            for iWedge in range(0,20,2):
                 wedge1.setOri(startOris[iWedge])
-                wedge1.setRadialPhase(nowPhase[iWedge/2])
+                wedge1.setRadialPhase(nowPhase[int(iWedge/2)])
                 wedge1.draw()
                 wedge1.setOri(startOris[iWedge+1])
-                wedge1.setRadialPhase(nowPhase[iWedge/2]+0.5*phaseSignVec[iWedge/2])
+                wedge1.setRadialPhase(nowPhase[int(iWedge/2)]+0.5*phaseSignVec[int(iWedge/2)])
                 wedge1.draw()
 
             if offTimeBehavior==3:
@@ -294,12 +295,12 @@ def driftChecker(scanDict,screenSize=[1024,768],offTimeBehavior=1,maskType=1):
                 fix2.draw()
             elif offTimeBehavior==2:
                 #draw static
-                for iWedge in xrange(0,20,2):
+                for iWedge in range(0,20,2):
                     wedge1.setOri(startOris[iWedge])
-                    wedge1.setRadialPhase(nowPhase[iWedge/2])
+                    wedge1.setRadialPhase(nowPhase[int(iWedge/2)])
                     wedge1.draw()
                     wedge1.setOri(startOris[iWedge+1])
-                    wedge1.setRadialPhase(nowPhase[iWedge/2]+0.5*phaseSignVec[iWedge/2])
+                    wedge1.setRadialPhase(nowPhase[int(iWedge/2)]+0.5*phaseSignVec[int(iWedge/2)])
                     wedge1.draw()
 
                 fix0.draw()
@@ -320,12 +321,12 @@ def driftChecker(scanDict,screenSize=[1024,768],offTimeBehavior=1,maskType=1):
                 phaseSignVec=phaseSign*altWedges
 #                nowPhase=startPhases + deltaPhase*(phaseSignVec)
                 nowPhase=oldPhases + deltaPhaseInc*(phaseSignVec)
-                for iWedge in xrange(0,20,2):
+                for iWedge in range(0,20,2):
                     wedge1.setOri(startOris[iWedge])
-                    wedge1.setRadialPhase(nowPhase[iWedge/2])
+                    wedge1.setRadialPhase(nowPhase[int(iWedge/2)])
                     wedge1.draw()
                     wedge1.setOri(startOris[iWedge+1])
-                    wedge1.setRadialPhase(nowPhase[iWedge/2]+0.5*phaseSignVec[iWedge/2])
+                    wedge1.setRadialPhase(nowPhase[int(iWedge/2)]+0.5*phaseSignVec[int(iWedge/2)])
                     wedge1.draw()
                 nowMask.draw()
                 fix0.draw()
@@ -341,14 +342,14 @@ def driftChecker(scanDict,screenSize=[1024,768],offTimeBehavior=1,maskType=1):
         winSub.flip()
         #row+=1
         #core.wait(3.0/60.0)
-    
+
         #count number of keypresses since previous frame, break if non-zero
         for key in event.getKeys():
             if key in ['q','escape']:
                 core.quit()
             elif key in responseKeys and respTimeCheck<respDuration:
                 subjectResponse[numCoins]=1
-        
+
         loopCounter +=1
         #core.wait(5.0)
         #outFile = open("debug.txt","w")
@@ -356,9 +357,9 @@ def driftChecker(scanDict,screenSize=[1024,768],offTimeBehavior=1,maskType=1):
         #outFile.close()
         #numpy.savetxt('debug.txt',debugVar,fmt='%.3f')
         #numpy.savetxt('debugchop.txt',debugVar[:row,],fmt='%.3f')
-    
+
     #calculate %age of responses that were correct
-    #find non-nan  
+    #find non-nan
     #np.isnan(a) gives boolean array of true/a=false
     #np.isnan(a).any(1) gives a col vector of the rows with nans
     #~np.isnan(a).any(1) inverts the logic
@@ -389,4 +390,3 @@ def driftChecker(scanDict,screenSize=[1024,768],offTimeBehavior=1,maskType=1):
     winSub.close()
     if screenCount==2:
         winOp.close()
-

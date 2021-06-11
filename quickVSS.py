@@ -5,7 +5,6 @@ Created on Tue Dec 18 10:45:22 2012
 @author: agrant
 """
 #import libraries
-#from __future__ import division
 from psychopy import visual
 from psychopy import gui
 from psychopy import core
@@ -83,11 +82,11 @@ infoDlg=gui.DlgFromDict(dictionary=scanDict,title='Scan parameters',
                              'animFreq':'animation frequency, Hz (drift/flicker frequency)',
                              'pairWedge':'draw a second set of wedges on the opposite side (rotating wedges only); 0 o r1 (no/yes)'})
 if infoDlg.OK:
-    print scanDict
+    print(scanDict)
     #running--save the params
     misc.toFile('lastrun.pickle',scanDict)
 else:
-    print 'user cancelled'
+    print('user cancelled')
     core.quit()
 
 
@@ -107,7 +106,7 @@ else:
     scanDict['monCalFile']='testMonitor'
 
 if scanDict['operatorScreen']!= scanDict['subjectScreen']:
-    if 'AS' in scanDict['monCalFile']:    
+    if 'AS' in scanDict['monCalFile']:
         screenSize=[1600,1200]
 #        screenSize=[1024,768]
     else:
@@ -121,7 +120,7 @@ else:
 #length of scan in s
 scanLength=float(scanDict['numCycles']*scanDict['period']+scanDict['preScanRest'])
 #open subject window
-winSub = visual.Window(screenSize,monitor=scanDict['monCalFile'],units="deg",screen=scanDict['subjectScreen'], 
+winSub = visual.Window(screenSize,monitor=scanDict['monCalFile'],units="deg",screen=scanDict['subjectScreen'],
                    color=[0.0,0.0,0.0],colorSpace='rgb',fullscr=True,allowGUI=False)
 winOp = visual.Window([200,200],monitor='testMonitor',units='deg',screen=scanDict['operatorScreen'],
                       color=[0.0,0.0,0.0],colorSpace='rgb')
@@ -137,9 +136,9 @@ black=[-1.0,-1.0,-1.0]
 IR=scanDict['innerRadius']
 
 
-#create a designmatrix 
+#create a designmatrix
 numTrials=240
-designMatrix=numpy.zeros((numTrials,3))    
+designMatrix=numpy.zeros((numTrials,3))
 
 #first N Trs are already zero--rest
 #figure out when each stim should be on
@@ -154,7 +153,7 @@ IBIdur=12
 #A: 13-24, 109-120, 205-216
 #B: 37-48,85-96,157-168
 #C: 61-72, 133-144, 181-192
-#all others are rest 
+#all others are rest
 designMatrix[12:24,0]=1
 designMatrix[36:48,0]=1
 designMatrix[64:76,0]=1
@@ -217,8 +216,8 @@ fix1 = visual.ShapeStim(winSub, pos=[8.0,0.0],vertices=((0.0,-0.2),(0.0,0.2)),li
 fix2 = visual.ShapeStim(winSub, pos=[8.0,0.0],vertices=((-0.2,0.0),(0.2,0.0)),lineWidth=3.0,
         lineColor=black,lineColorSpace='rgb',
         fillColor=black,fillColorSpace='rgb',autoLog=False)
- 
- 
+
+
 fixOri=0
 #create the unicode text stimulus
 #    thisText="u"+"\""+Alist[0]+"\""
@@ -231,8 +230,8 @@ stim2_s=visual.TextStim(winSub,text='S',color=[1,1,1],colorSpace='rgb',units='de
 stim3_s=visual.TextStim(winSub,text='S',color=[1,1,1],colorSpace='rgb',units='deg',height=2,pos=(0,0))
 
 msg1x=visual.TextStim(winSub, pos=[0,+8],text='VSS localizer')
-msg1a = visual.TextStim(winSub, pos=[0,+5],text='During the scan, please keep your eyes on the +',height=1)    
-msg1b = visual.TextStim(winSub, pos=[0,+2],text='Hit any button any time the + becomes an X.',height=1)    
+msg1a = visual.TextStim(winSub, pos=[0,+5],text='During the scan, please keep your eyes on the +',height=1)
+msg1b = visual.TextStim(winSub, pos=[0,+2],text='Hit any button any time the + becomes an X.',height=1)
 msg1=visual.TextStim(winSub,pos=[0,-3],text='Subject: Hit a key when ready.',color=[1,-1,-1],colorSpace='rgb')
 msg1.draw()
 msg1a.draw()
@@ -251,11 +250,11 @@ while thisKey==None:
 if thisKey in ['q','escape']:
     core.quit() #abort
 else:
-    event.clearEvents()        
+    event.clearEvents()
 
 
-msg1a = visual.TextStim(winSub, pos=[0,+5],text='   ',height=1)    
-msg1b = visual.TextStim(winSub, pos=[0,+2],text='Waiting for magnet',height=1)    
+msg1a = visual.TextStim(winSub, pos=[0,+5],text='   ',height=1)
+msg1b = visual.TextStim(winSub, pos=[0,+2],text='Waiting for magnet',height=1)
 #msg1c.draw()
 msg1a.draw()
 msg1b.draw()
@@ -263,7 +262,7 @@ fix0.draw()
 fix1.draw()
 fix2.draw()
 winSub.flip()
-  
+
 #wait for trigger
 trig=None
 while trig==None:
@@ -275,7 +274,7 @@ else: #stray key
     event.clearEvents()
 
 
-#start the timer            
+#start the timer
 scanTimer=core.Clock()
 startTime=scanTimer.getTime()
 timeNow=scanTimer.getTime()
@@ -284,7 +283,7 @@ msg.draw()
 #    trialTimer=core.Clock()
 #    trialTime=trialTimer.getTime()
 trialTimerNew=core.CountdownTimer()
-fixTimer=core.Clock() 
+fixTimer=core.Clock()
 respTimer=core.Clock()
 #start counters for each list
 Acounter=0
@@ -292,12 +291,12 @@ Bcounter=0
 Ccounter=0
 respCounter=0
 numCoins=0
-#loop through the number of trials, presenting appropriate stimulus or rest 
+#loop through the number of trials, presenting appropriate stimulus or rest
 for iTrial in xrange(numTrials):
 #        print iTrial
-#        print designMatrix[iTrial,:]  
+#        print designMatrix[iTrial,:]
     flipCoin=numpy.random.ranf()
-    if flipCoin<fixPercentage: 
+    if flipCoin<fixPercentage:
         #change fixation size
         fixOri=45
         fixTimer.reset()
@@ -310,12 +309,12 @@ for iTrial in xrange(numTrials):
         fixOri=0
     fix1.setOri(fixOri)
     fix2.setOri(fixOri)
-    #dispay stim for stimDuration amount of time 
+    #dispay stim for stimDuration amount of time
     trialTimerNew.add(stimDur)
     while trialTimerNew.getTime()>0:
         timeNow = scanTimer.getTime()
         #trialTime=trialTimer.getTime()
-        #print trialTimerNew.getTime()            
+        #print trialTimerNew.getTime()
         if designMatrix[iTrial,0]==1:
             stim3_s.draw()
             stim2_s.draw()
@@ -323,7 +322,7 @@ for iTrial in xrange(numTrials):
         fix0.draw()
         fix1.draw()
         fix2.draw()
-            
+
         msg.setText('t = %.3f' %timeNow)
         msg.draw()
         winSub.flip()
@@ -335,7 +334,7 @@ for iTrial in xrange(numTrials):
                 subjectResponse[numCoins]=1
     trialTimerNew.add(trialLength-stimDur)
     while trialTimerNew.getTime()>0:
-        #then show fixation for ISI time 
+        #then show fixation for ISI time
         timeNow = scanTimer.getTime()
         #add decision about fixation point changing here
         #trialTime=trialTimer.getTime()

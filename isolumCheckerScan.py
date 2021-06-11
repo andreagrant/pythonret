@@ -1,12 +1,11 @@
 #import libraries
-from __future__ import division
 from psychopy import visual
 from psychopy import gui
 from psychopy import core
 from psychopy import data
 from psychopy import misc
 from psychopy import event
-from psychopy import filters
+from psychopy.visual import filters
 from psychopy import monitors
 import time, numpy, random
 #import retinotopyScans
@@ -58,7 +57,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
     myOpScreen=numpy.int(scanDict['operatorScreen'])
 #    print mySubScreen
 #    print myOpScreen
-    winSub = visual.Window(screenSize,monitor=scanDict['monCalFile'],units="deg",screen=mySubScreen, 
+    winSub = visual.Window(screenSize,monitor=scanDict['monCalFile'],units="deg",screen=mySubScreen,
                        color=[-1.0,-1.0,-1.0],colorSpace='rgb',fullscr=False,allowGUI=False)
     #needs to be flexible--how do I extract the dims from screen?
 #    screenSize=numpy.array([1600,1200])
@@ -82,10 +81,10 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
 #    plt.plot(plotResp[0:2],'ro')
 #    plt.ylabel('subject responses')
 #    plt.show()
-#    plt.axis([0,scanLength*0.6,-0.1,1.1])    
-    
-    operatorWindow=visual.Window([1024,768],monitor='testMonitor',units='deg',screen=myOpScreen,color=[0,0,0],colorSpace='rgb')                       
-    
+#    plt.axis([0,scanLength*0.6,-0.1,1.1])
+
+    operatorWindow=visual.Window([1024,768],monitor='testMonitor',units='deg',screen=myOpScreen,color=[0,0,0],colorSpace='rgb')
+
     #create a shapeStim to show the operator how the subject is doing on the task
 #    opPlotRight=visual.ShapeStim(operatorWindow,units='pix',vertices=plotResp,closeShape=False,pos=(-448,-448),lineWidth=1,lineColor=[-1,1,-1],lineColorSpace='rgb' )
 #    opPlotWrong=visual.ShapeStim(operatorWindow,units='pix',vertices=plotResp,closeShape=False,pos=(-448,-448),lineWidth=1,lineColor=[1,-1,-1],lineColorSpace='rgb' )
@@ -124,7 +123,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
     #create a designmatrix for trigger-based counting
     #first create an array--length = total number of Trs
     numTr=scanLength/scanDict['Tr']
-    designMatrix=numpy.zeros((numTr,1))    
+    designMatrix=numpy.zeros((numTr,1))
 
     #first N Trs are already zero--rest
     #figure out when the stim should be on
@@ -145,13 +144,13 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
     colorBGp=2*colorBGf-1
 #    image1=visual.SimpleImageStim(winSub,image='redblack1.jpg')
 #    image2=visual.SimpleImageStim(winSub,image='redblack2.jpg')
-    
+
 #    image1=visual.PatchStim(winSub,tex='redblack1a.jpg',mask=None,size=[OR,OR])
 #    image2=visual.PatchStim(winSub,tex='redblack2a.jpg',mask=None,size=[OR,OR])
- 
+
     #let's try making some numpy arrays of the checkerboards! translated from matlab arrays
     #size of image--hardcode for now, but needs to be 2^n that fits inside smaller screen dimension
-#    twoN=numpy.ones((13))    
+#    twoN=numpy.ones((13))
 #    for n in range(13):
 #        twoN[n]=pow(2.0,n)
 #    twoNsize=numpy.nonzero(twoN>screenSize[1])
@@ -170,7 +169,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
     elif screenSize[0]<2057:
         imageSize=2048
     halfSize=numpy.int(imageSize/2)
-#    print screenSize    
+#    print screenSize
 #    print imageSize
 #    print halfSize
     #create arrays of x,y, and r,theta
@@ -185,7 +184,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
     xOverY=x/y
     theta = numpy.arctan(xOverY)
     theta[halfSize+1,halfSize+1]=0
-    
+
     #number of wedges (pairs!!)--eventually to be a var passed in
     nWedges=8.0
     #number of ring pairs
@@ -195,11 +194,11 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
     ringWidth = 2.0/nRings
     #ring function--describes how the ring width increases with eccentricity
     ringFunction=numpy.power(r/halfSize,0.3)+0.2#um, is there an int float problem here?
-    
+
     wedgeMask = 0.5 - (numpy.mod(theta,wedgeWidth)>(wedgeWidth/2.0)) #does this work
     rmA=numpy.mod(ringFunction,ringWidth)>(ringWidth/2.0)
     ringMask = 1 - 2.0*(rmA)
-    
+
     checkerBoardLogic=wedgeMask*ringMask + 0.5
     #checkerBoardBG=r>
     #initialize an array of 1024x1024x3 for RGB channels
@@ -220,9 +219,9 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
     #now add in the background color around the widest ring
 #    imageMask=numpy.ones((imageSize,imageSize))
  #   imageMask[r>halfSize]=-1
-    print colorBG
-    print colorBGf
-    print colorBGp    
+    print(colorBG)
+    print(colorBGf)
+    print(colorBGp)
     checkerBoardAR[r>halfSize]=colorBGp[0]
     checkerBoardAG[r>halfSize]=colorBGp[1]
     checkerBoardAB[r>halfSize]=colorBGp[2]
@@ -230,7 +229,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
     checkerBoardA[:,:,0]=checkerBoardAR
     checkerBoardA[:,:,1]=checkerBoardAG
     checkerBoardA[:,:,2]=checkerBoardAB
-    
+
     checkerBoardB=numpy.ones((imageSize, imageSize,3))
     checkerBoardBR=numpy.ones((imageSize, imageSize))
     checkerBoardBB=numpy.ones((imageSize, imageSize))
@@ -247,7 +246,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
     checkerBoardB[:,:,0]=checkerBoardBR
     checkerBoardB[:,:,1]=checkerBoardBG
     checkerBoardB[:,:,2]=checkerBoardBB
-    
+
 #    numpy.savetxt('chAr.txt',checkerBoardA[:,:,0],fmt='%f')
 #    numpy.savetxt('chAg.txt',checkerBoardA[:,:,1],fmt='%f')
 #    numpy.savetxt('chAb.txt',checkerBoardA[:,:,2],fmt='%f')
@@ -261,27 +260,27 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
     stimA=visual.GratingStim(winSub,tex=checkerBoardA,size=imageSize,sf=1/imageSize,units='pix',texRes=imageSize)
     stimB=visual.GratingStim(winSub,tex=checkerBoardB,size=imageSize,sf=1/imageSize,units='pix')
 
-   
-    ReverseFreq =flickFreq #drift in Hz. 
 
-    
+    ReverseFreq =flickFreq #drift in Hz.
+
+
     #make a fixation cross which will rotate 45 deg on occasion
     fix0 = visual.Circle(winSub,radius=IR/2.0,edges=32,lineColor=gray,lineColorSpace='rgb',
             fillColor=gray,fillColorSpace='rgb',autoLog=False)
     fix1 = visual.ShapeStim(winSub, pos=[0.0,0.0],vertices=((0.0,-0.2),(0.0,0.2)),lineWidth=3.0,
             lineColor=black,lineColorSpace='rgb',
             fillColor=black,fillColorSpace='rgb',autoLog=False)
-    
+
     fix2 = visual.ShapeStim(winSub, pos=[0.0,0.0],vertices=((-0.2,0.0),(0.2,0.0)),lineWidth=3.0,
             lineColor=black,lineColorSpace='rgb',
             fillColor=black,fillColorSpace='rgb',autoLog=False)
-    
+
     #stim.setOri(t*rotationRate*360.0)
     #stim.setRadialPhase(driftRate,'+')
     #stim.setPos()#something here
     msg1x=visual.TextStim(winSub, pos=[0,+8],text='flickering checkerboard')
-    msg1a = visual.TextStim(winSub, pos=[0,+5],text='During the scan, please keep your eyes on the + in the center.',height=1)    
-    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Hit any button any time the + becomes an X.',height=1)    
+    msg1a = visual.TextStim(winSub, pos=[0,+5],text='During the scan, please keep your eyes on the + in the center.',height=1)
+    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Hit any button any time the + becomes an X.',height=1)
     msg1=visual.TextStim(winSub,pos=[0,-3],text='Subject: Hit a button when ready.',color=[1,-1,-1],colorSpace='rgb')
     msg1.draw()
     msg1a.draw()
@@ -300,8 +299,8 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
     if thisKey in ['q','escape']:
         core.quit() #abort
     else:
-        event.clearEvents()        
-#    while len(event.getKeys())==0: 
+        event.clearEvents()
+#    while len(event.getKeys())==0:
 #        core.wait(0.05)
 #    event.clearEvents()
 #    msg1=visual.TextStim(winSub,pos=[0,+0.1],text='Waiting for magnet....',color=[-1,1,-1],colorSpace='rgb',height=0.1,units='norm')
@@ -312,8 +311,8 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
 #    fix2.draw()
 #    msg1.draw()
 #    winSub.flip()
-    msg1a = visual.TextStim(winSub, pos=[0,+5],text='   ',height=1)    
-    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Waiting for magnet',height=1)    
+    msg1a = visual.TextStim(winSub, pos=[0,+5],text='   ',height=1)
+    msg1b = visual.TextStim(winSub, pos=[0,+2],text='Waiting for magnet',height=1)
     #msg1c=visual.TextStim(winSub,pos=[0,-3],text='Subject: Hit a key when ready.',color=[1,-1,-1],colorSpace='rgb')
     msg1c.draw()
     msg1a.draw()
@@ -322,7 +321,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
     fix1.draw()
     fix2.draw()
     winSub.flip()
-  
+
     #wait for trigger
     trig=None
     while trig==None:
@@ -332,8 +331,8 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
         core.quit()
     else: #stray key
         event.clearEvents()
-    
-    #start the timer            
+
+    #start the timer
     scanTimer=core.Clock()
     startTime=scanTimer.getTime()
 
@@ -364,7 +363,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
     plotLabel3.draw()
     plotLabel4.draw()
 
-    fixTimer=core.Clock() 
+    fixTimer=core.Clock()
     respTimer=core.Clock()
     flickerTimer=core.Clock()
 
@@ -387,7 +386,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
             if restLoopCounter%100 ==0 and restLoopCounter>10:
                 #flip a coin to decide
                 flipCoin=numpy.random.ranf()
-                if flipCoin<fixPercentage: 
+                if flipCoin<fixPercentage:
                     #reset timers/change ori
                     fixOri=45
                     fixTimer.reset()
@@ -402,7 +401,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
             respTimeCheck=respTimer.getTime()
             if fixTimeCheck >fixDuration: #timer expired--reset ori
                 fixOri=0
-    
+
             fix1.setOri(fixOri)
             fix2.setOri(fixOri)
             fix0.draw()
@@ -420,7 +419,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
                     plotResp[numCoins]=1
                     subRespArray[respCounter,2]=1
 #                elif key in ['t']:
-            #increment loop count for each trigger 
+            #increment loop count for each trigger
             #update the operator graph
             #determine response correctness and append to plot vertices variable
             plotResp[respCounter,0]=respCounter
@@ -471,26 +470,26 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
             opPlot.draw()
             restLoopCounter +=1
 #            if restLoopCounter%300 and restLoopCounter>5:
-#                plt.plot(plotResp[0:numCoins+1],'ro')            
+#                plt.plot(plotResp[0:numCoins+1],'ro')
 #                plt.draw
 
-        
-        #pre-scan rest is done.        
+
+        #pre-scan rest is done.
         #prepare for looping through the cycles
         epochTimer = core.Clock()
-    
+
         #time based looping through stimulus
         while timeNow<startTime+scanLength: #loop for scan duration
-            timeBefore = timeNow    
+            timeBefore = timeNow
             timeNow = scanTimer.getTime()
             deltaT=timeNow - startTime
             deltaTinc=timeNow-timeBefore
-            
+
             #every 100 frames, decide if the fixation point should change or not
             if loopCounter%100 ==0 and loopCounter>10:
                 #flip a coin to decide
                 flipCoin=numpy.random.ranf()
-                if flipCoin<fixPercentage: 
+                if flipCoin<fixPercentage:
                     #reset timers/change ori
                     fixOri=45
                     fixTimer.reset()
@@ -506,10 +505,10 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
             respTimeCheck=respTimer.getTime()
             if fixTimeCheck >fixDuration: #timer expired--reset ori
                 fixOri=0
-    
+
             fix1.setOri(fixOri)
             fix2.setOri(fixOri)
-            
+
             # alternate between stimulus and rest, starting with pre-scan duration of rest
             epochTime=epochTimer.getTime()
             #half-period  epoch of stimulus
@@ -527,7 +526,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
                     #second half of period, show wedge 2
     #                image2.draw()
                      stimB.setPhase(radialPhase)
-                     stimB.draw()               
+                     stimB.draw()
                 else:
                     #clocked over, reset timer
                     #could also do some modulus of timing
@@ -542,14 +541,14 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
                 fix2.draw()
             else:
                 epochTimer.reset()
-            
+
             msg.setText('t = %.3f' %timeNow)
             msg.draw()
             operatorWindow.flip()
             winSub.flip()
             #row+=1
             #core.wait(3.0/60.0)
-        
+
             #count number of keypresses since previous frame, break if non-zero
             for key in event.getKeys():
                 if key in ['q','escape']:
@@ -558,7 +557,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
                     subjectResponse[numCoins]=1
                     subRespArray[respCounter,2]=1
 #            if loopCounter%300 and loopCounter>5:
-#                plt.plot(plotResp[0:numCoins+1],'ro')            
+#                plt.plot(plotResp[0:numCoins+1],'ro')
 #                plt.draw
 
             #update the operator graph
@@ -614,8 +613,8 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
             opPlot.setXYs(plotResp)
             opPlot.setColors(plotColors)
             opPlot.draw()
-            loopCounter +=1        
-        
+            loopCounter +=1
+
     else: #trigger based
         #loop through, presenting stim or rest according to designMatrix
         TrCounter=0
@@ -628,7 +627,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
         while TrCounter<numTr:
         	#update times
             timeNow = scanTimer.getTime()
-            timeBefore = timeNow    
+            timeBefore = timeNow
             timeNow = scanTimer.getTime()
             deltaT=timeNow - startTime
             deltaTinc=timeNow-timeBefore
@@ -640,7 +639,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
                 #flip a coin to decide
                 flipCoin=numpy.random.ranf()
                 numFlips+=1
-                if flipCoin<fixPercentage: 
+                if flipCoin<fixPercentage:
                     #reset timers/change ori
                     fixOri=45
                     fixTimer.reset()
@@ -655,11 +654,11 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
             respTimeCheck=respTimer.getTime()
             if fixTimeCheck >fixDuration: #timer expired--reset ori
                 fixOri=0
-            
+
             debugVar[loopCounter,1]=fixOri
             fix1.setOri(fixOri)
             fix2.setOri(fixOri)
-            
+
             #draw stim or rest, based on designMatrix
 	 # alternate between stimulus and rest, starting with pre-scan duration of rest
             if designMatrix[TrCounter]==1:
@@ -672,7 +671,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
                 elif flickerTimeCheck<1/ReverseFreq:
                     #second half of period, show wedge 2
     #                image2.draw()
-                     stimB.draw()               
+                     stimB.draw()
                 else:
                     #clocked over, reset timer
                     #could also do some modulus of timing
@@ -685,8 +684,8 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
                 fix0.draw()
                 fix1.draw()
                 fix2.draw()
-            
-            #count number of keypresses since previous frame, 
+
+            #count number of keypresses since previous frame,
             TrDone=0
             for key in event.getKeys():
                 if key in ['q','escape']:
@@ -695,7 +694,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
                     subjectResponse[numCoins]=1
                     subRespArray[respCounter,2]=1
                 elif key in ['t'] and TrDone==0:
-                    #increment loop count for each trigger 
+                    #increment loop count for each trigger
                     TrCounter +=1
                     TrDone=1
             #update the operator graph
@@ -757,7 +756,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
 #                msgPC.setText(msgTextPC)
 ##                msgTC.setText(msgTextTC)
 #                msgPC.draw()
-##                msgTC.draw()            
+##                msgTC.draw()
             msg.setText('t = %.3f' %timeNow)
             ttp=TrCounter+1
             msgTr.setText('Tr = %i' %ttp)
@@ -767,10 +766,10 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
             winSub.flip()
             #row+=1
             #core.wait(3.0/60.0)
-        
+
             #update plot once per 3Tr
 #            if TrCounter%3==0 and TrCounter>1:
-#                plt.plot(plotResp[0:numFlips+1],'ro')            
+#                plt.plot(plotResp[0:numFlips+1],'ro')
 #                plt.draw
             #plt.draw()
 #            if numCoins>2:
@@ -789,14 +788,14 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
 #                msg5.draw()
 #                msg.draw()
 #                msgTr.draw()
-#                operatorWindow.flip() 
+#                operatorWindow.flip()
 #                print msgText
 #                print msgText2
 
             loopCounter +=1
-             
-             
-    
+
+
+
     #core.wait(5.0)
     #outFile = open("debug.txt","w")
     #outFile.write(str(debugVar))
@@ -804,9 +803,9 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
     #numpy.savetxt('debug.txt',debugVar,fmt='%.3f')
     #numpy.savetxt('debug.txt',designMatrix,fmt='%.3i')
     #numpy.savetxt('debugchop.txt',debugVar[:row,],fmt='%.3f')
-    
+
     #calculate %age of responses that were correct
-    #find non-nan  
+    #find non-nan
     #np.isnan(a) gives boolean array of true/a=false
     #np.isnan(a).any(1) gives a col vector of the rows with nans
     #~np.isnan(a).any(1) inverts the logic
@@ -818,7 +817,7 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
         percentCorrect=100.0*float(numCorrect)/(float(numCoins))
     else:
         percentCorrect=100.0
-    
+
     msgText='You got %.0f %% correct!' %(percentCorrect,)
     msg1=visual.TextStim(winSub,pos=[0,+3],text=msgText)
     msg1.draw()
@@ -836,5 +835,3 @@ def isolumCheckerScan(scanDict, screenSize=[1024,768]):
     core.wait(2)
     winSub.close()
     operatorWindow.close()
-
-
